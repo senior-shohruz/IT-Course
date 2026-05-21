@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — IT Course</title>
+<meta name="description" content="IT Course talaba paneli — Video darslar, Testlar, AI Teacher va Kod Editor"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root{
+  --bg:#060c1a;--bg2:#0a1120;--bg3:#0d1526;
+  --sidebar:#060b18;--card:rgba(10,17,32,0.95);--card2:rgba(255,255,255,0.03);
+  --blue:#3b82f6;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;
+  --yellow:#f59e0b;--purple:#8b5cf6;--pink:#ec4899;--orange:#f97316;
+  --grad:linear-gradient(135deg,#3b82f6,#06b6d4);
+  --grad2:linear-gradient(135deg,#8b5cf6,#3b82f6);
+  --grad3:linear-gradient(135deg,#10b981,#06b6d4);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:rgba(148,163,184,0.08);--bblue:rgba(59,130,246,0.25);
+  --font:'Inter',sans-serif;--display:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--rl:16px;--rx:22px;
+  --nav-h:62px;--sb-w:252px;
+  --shadow:0 24px 64px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.2);
+  --glow:0 0 40px rgba(59,130,246,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+::selection{background:rgba(59,130,246,.25)}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:var(--font);border:none;background:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
+
+/* ── ANIMATED BG ── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 800px 600px at 20% 40%,rgba(59,130,246,.05),transparent),
+    radial-gradient(ellipse 600px 400px at 80% 60%,rgba(139,92,246,.04),transparent);
+}
+
+/* ═══════════════════ TOP NAV ═══════════════════ */
+.topnav{height:var(--nav-h);background:rgba(6,11,24,.96);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  padding:0 20px;gap:14px;flex-shrink:0;position:relative;z-index:50;
+  box-shadow:0 1px 0 rgba(255,255,255,.04)}
+.tn-logo{display:flex;align-items:center;gap:10px;width:var(--sb-w);flex-shrink:0}
+.tn-icon{width:36px;height:36px;background:var(--grad);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);
+  font-size:14px;font-weight:900;color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.tn-name{font-family:var(--display);font-size:19px;font-weight:900;letter-spacing:-.03em}
+.tn-name span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tn-center{flex:1;display:flex;align-items:center;gap:6px}
+.tab-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;
+  font-size:13px;font-weight:600;color:var(--text2);transition:.2s;border:1px solid transparent;cursor:pointer;position:relative}
+.tab-btn:hover{color:var(--text);background:var(--card2)}
+.tab-btn.active{color:var(--text);background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.2)}
+.tab-btn .tb-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);display:none}
+.tab-btn.active .tb-dot{display:block}
+.tab-btn .tb-badge{background:var(--red);color:#fff;font-size:9px;font-weight:800;
+  padding:2px 5px;border-radius:99px;margin-left:2px}
+.tn-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.icon-btn{width:36px;height:36px;background:var(--card2);border:1px solid var(--border);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  color:var(--text2);transition:.2s;cursor:pointer;position:relative}
+.icon-btn:hover{background:rgba(255,255,255,.06);color:var(--text);border-color:rgba(255,255,255,.1)}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;
+  background:var(--red);border-radius:50%;border:2px solid var(--bg)}
+.tn-avatar{display:flex;align-items:center;gap:9px;padding:5px 12px;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s}
+.tn-avatar:hover{background:rgba(255,255,255,.05)}
+.av-ring{width:32px;height:32px;border-radius:50%;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  color:#fff;border:2px solid rgba(59,130,246,.3)}
+.av-name{font-size:13px;font-weight:600}
+.logout-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;
+  border-radius:9px;font-size:12.5px;font-weight:600;color:var(--text3);transition:.2s}
+.logout-btn:hover{color:var(--red);background:rgba(239,68,68,.06)}
+
+/* ═══════════════════ LAYOUT ═══════════════════ */
+.main{display:flex;flex:1;overflow:hidden;position:relative;z-index:1}
+
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+.sidebar{width:var(--sb-w);background:var(--sidebar);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding-bottom:16px}
+.sb-sec{padding:18px 14px 7px;font-size:10.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.7px;color:var(--text3)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 14px;
+  border-radius:var(--r);margin:1px 6px;font-size:13.5px;font-weight:500;
+  color:var(--text2);cursor:pointer;transition:.18s;border:1px solid transparent}
+.sb-item:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.sb-item.active{color:var(--text);background:rgba(59,130,246,.1);
+  border-color:rgba(59,130,246,.15);font-weight:600}
+.sb-item.active .sb-ic{color:var(--blue)}
+.sb-ic{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;
+  font-size:9.5px;font-weight:800;padding:2px 6px}
+.sb-badge.g{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+
+/* AI pulse on sidebar */
+.ai-pulse{position:relative}
+.ai-pulse::after{content:'';position:absolute;top:8px;right:12px;width:7px;height:7px;
+  border-radius:50%;background:var(--purple);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
+
+/* Courses sidebar */
+.sb-course{margin:4px 8px;padding:11px 12px;background:var(--card2);
+  border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:.2s}
+.sb-course:hover{border-color:var(--bblue);background:rgba(59,130,246,.04)}
+.sb-course.active{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.08)}
+.sc-top{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sc-emoji{font-size:18px}
+.sc-title{font-size:12.5px;font-weight:600;line-height:1.3;flex:1}
+.sc-prog{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.sc-fill{height:100%;background:var(--grad);border-radius:2px;transition:width 1s ease}
+.sc-meta{font-size:10.5px;color:var(--text3);margin-top:5px;display:flex;gap:6px}
+
+/* ═══════════════════ CONTENT ═══════════════════ */
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.view{display:none;flex:1;overflow:hidden}
+.view.on{display:flex;flex-direction:column}
+
+/* ════════════════════════════════════════════════
+   VIEW 1: OVERVIEW (DASHBOARD HOME)
+════════════════════════════════════════════════ */
+.overview{overflow-y:auto;padding:24px}
+.ov-welcome{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(6,182,212,.05));
+  border:1px solid rgba(59,130,246,.15);border-radius:var(--rx);padding:24px 28px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  gap:20px;margin-bottom:20px;position:relative;overflow:hidden}
+.ov-welcome::before{content:'';position:absolute;right:-20px;top:-30px;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);pointer-events:none}
+.ov-w-title{font-family:var(--display);font-size:22px;font-weight:900;margin-bottom:5px}
+.ov-w-sub{font-size:14px;color:var(--text2)}
+.ov-stats{display:flex;gap:24px}
+.os-item{text-align:center}
+.os-val{font-family:var(--display);font-size:26px;font-weight:900;display:block;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.os-lbl{font-size:11px;color:var(--text3);font-weight:500}
+.ov-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.ov-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rl);
+  padding:18px;transition:.25s;cursor:default;position:relative;overflow:hidden}
+.ov-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.ov-card:nth-child(1)::after{background:linear-gradient(90deg,var(--blue),transparent)}
+.ov-card:nth-child(2)::after{background:linear-gradient(90deg,var(--green),transparent)}
+.ov-card:nth-child(3)::after{background:linear-gradient(90deg,var(--yellow),transparent)}
+.ov-card:nth-child(4)::after{background:linear-gradient(90deg,var(--purple),transparent)}
+.ov-card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.15);box-shadow:var(--glow)}
+.oc-val{font-family:var(--display);font-size:30px;font-weight:900;line-height:1;margin-bottom:6px}
+.oc-lbl{font-size:12.5px;color:var(--text2);margin-bottom:6px}
+.oc-trend{font-size:11.5px;font-weight:600}
+.ov-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:20px}
+.card-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.cb-head{padding:16px 18px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:space-between}
+.cb-head-btn{font-size:12px;font-weight:600;color:var(--blue);cursor:pointer;
+  background:rgba(59,130,246,.08);padding:4px 10px;border-radius:6px;transition:.2s}
+.cb-head-btn:hover{background:rgba(59,130,246,.15)}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:100px;padding:16px 18px}
+.bar-w{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.bar-f{width:100%;border-radius:4px 4px 0 0;background:var(--grad);transition:height .5s ease;min-height:4px}
+.bar-lbl{font-size:9.5px;color:var(--text3)}
+.ov-quick{display:flex;gap:10px;margin-bottom:20px}
+.qb{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px;border-radius:var(--rl);font-size:14px;font-weight:700;cursor:pointer;
+  transition:.3s;border:1px solid transparent}
+.qb:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.qb-ai{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(59,130,246,.1));
+  border-color:rgba(139,92,246,.2);color:var(--purple)}
+.qb-ai:hover{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(59,130,246,.18));border-color:rgba(139,92,246,.4)}
+.qb-vid{background:linear-gradient(135deg,rgba(6,182,212,.1),rgba(59,130,246,.08));
+  border-color:rgba(6,182,212,.15);color:var(--cyan)}
+.qb-vid:hover{background:linear-gradient(135deg,rgba(6,182,212,.18),rgba(59,130,246,.14))}
+.qb-test{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(6,182,212,.06));
+  border-color:rgba(16,185,129,.15);color:var(--green)}
+.qb-test:hover{background:linear-gradient(135deg,rgba(16,185,129,.18),rgba(6,182,212,.12))}
+.qb-code{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(239,68,68,.05));
+  border-color:rgba(245,158,11,.12);color:var(--yellow)}
+.qb-code:hover{background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(239,68,68,.08))}
+
+/* achievements */
+.achievement-list{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.ach-item{display:flex;align-items:center;gap:11px;padding:10px 12px;
+  border-radius:10px;transition:.2s}
+.ach-item:hover{background:rgba(255,255,255,.03)}
+.ach-icon{font-size:22px;flex-shrink:0}
+.ach-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.ach-sub{font-size:11px;color:var(--text3)}
+
+/* ════════════════════════════════════════════════
+   VIEW 2: AI TEACHER
+════════════════════════════════════════════════ */
+.ai-view{display:none;flex:1;overflow:hidden}
+.ai-view.on{display:flex;flex-direction:row}
+.ai-left{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* AI Header */
+.ai-header{padding:14px 24px;border-bottom:1px solid var(--border);
+  background:rgba(8,13,25,.98);backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ai-head-left{display:flex;align-items:center;gap:14px}
+.ai-avatar{width:44px;height:44px;border-radius:14px;
+  background:linear-gradient(135deg,#7c3aed,#3b82f6);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  box-shadow:0 4px 16px rgba(124,58,237,.3);flex-shrink:0;position:relative}
+.ai-status-dot{position:absolute;bottom:-2px;right:-2px;width:12px;height:12px;
+  background:var(--green);border-radius:50%;border:2px solid var(--bg);animation:pulseDot 2s infinite}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{box-shadow:0 0 0 6px rgba(16,185,129,0)}}
+.ai-head-info h3{font-family:var(--display);font-size:17px;font-weight:800;margin-bottom:2px}
+.ai-head-info p{font-size:12px;color:var(--green);font-weight:500;display:flex;align-items:center;gap:5px}
+.ai-head-info p::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulseDot 2s infinite}
+.ai-actions{display:flex;gap:8px}
+.ai-act-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;
+  background:var(--card2);border:1px solid var(--border);border-radius:8px;
+  font-size:12.5px;font-weight:600;color:var(--text2);cursor:pointer;transition:.2s}
+.ai-act-btn:hover{color:var(--text);border-color:rgba(255,255,255,.12)}
+
+/* Chat area */
+.chat-area{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.msg{display:flex;gap:12px;animation:msgIn .3s ease both}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.msg-av{width:36px;height:36px;border-radius:11px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.msg-av.ai-av{background:linear-gradient(135deg,#7c3aed,#3b82f6);font-size:18px;
+  box-shadow:0 2px 10px rgba(124,58,237,.2)}
+.msg-av.user-av{background:var(--grad);font-size:13px;font-weight:700;color:#fff}
+.msg-body{max-width:72%;display:flex;flex-direction:column;gap:5px}
+.msg.user .msg-body{align-items:flex-end}
+.msg-name{font-size:11.5px;font-weight:600;color:var(--text3)}
+.msg-bubble{padding:13px 16px;border-radius:16px;font-size:14px;line-height:1.65;
+  position:relative;word-break:break-word}
+.msg.ai .msg-bubble{background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:4px 16px 16px 16px}
+.msg.user .msg-bubble{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(6,182,212,.12));
+  border:1px solid rgba(59,130,246,.25);border-radius:16px 4px 16px 16px;color:var(--text)}
+.msg-bubble p{margin-bottom:10px}
+.msg-bubble p:last-child{margin-bottom:0}
+.msg-bubble strong{color:var(--cyan);font-weight:700}
+.msg-bubble ul{margin:8px 0 8px 16px;display:flex;flex-direction:column;gap:4px}
+.msg-bubble li{font-size:13.5px;color:var(--text2)}
+.msg-bubble code{font-family:var(--mono);font-size:12.5px;background:rgba(0,0,0,.4);
+  padding:2px 6px;border-radius:5px;color:var(--cyan);border:1px solid rgba(59,130,246,.15)}
+.msg-code{margin:10px 0;border-radius:10px;overflow:hidden;border:1px solid rgba(59,130,246,.15)}
+.mc-head{background:rgba(0,0,0,.5);padding:8px 14px;display:flex;align-items:center;
+  justify-content:space-between;font-size:11px;font-weight:700;color:var(--text3)}
+.mc-lang{color:var(--cyan)}
+.mc-copy{cursor:pointer;padding:3px 8px;background:rgba(59,130,246,.1);color:var(--blue);
+  border-radius:5px;font-size:10.5px;font-weight:700;transition:.2s}
+.mc-copy:hover{background:rgba(59,130,246,.2)}
+.mc-body{background:rgba(0,0,0,.4);padding:14px;font-family:var(--mono);
+  font-size:13px;line-height:1.7;color:#e2e8f0;overflow-x:auto;white-space:pre}
+.kw{color:#c084fc}.fn{color:#60a5fa}.st{color:#86efac}.nm{color:#fbbf24}
+.cm{color:#4b5563;font-style:italic}.op{color:#94a3b8}
+
+.msg-time{font-size:10.5px;color:var(--text3);margin-top:3px;padding:0 4px}
+.msg-rating{display:flex;align-items:center;gap:8px;margin-top:6px;padding:0 4px}
+.mr-btn{font-size:12px;color:var(--text3);cursor:pointer;transition:.2s;padding:3px}
+.mr-btn:hover{color:var(--text)}
+
+/* Typing indicator */
+.typing-msg{display:flex;gap:12px;animation:msgIn .3s ease both}
+.typing-bubble{padding:13px 18px;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);border-radius:4px 16px 16px 16px;display:flex;gap:5px;align-items:center}
+.typing-dot{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:td .9s ease-in-out infinite}
+.typing-dot:nth-child(2){animation-delay:.15s}
+.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes td{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+
+/* Suggestions */
+.suggestions{padding:14px 24px;border-top:1px solid var(--border);
+  background:rgba(6,11,24,.6);flex-shrink:0}
+.sug-label{font-size:11px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.sug-chips{display:flex;gap:7px;flex-wrap:wrap}
+.sug-chip{padding:7px 13px;background:rgba(139,92,246,.08);
+  border:1px solid rgba(139,92,246,.15);border-radius:99px;
+  font-size:12.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:.2s}
+.sug-chip:hover{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.3);color:var(--text)}
+
+/* Chat input */
+.chat-input-wrap{padding:14px 24px;border-top:1px solid var(--border);
+  background:rgba(6,11,24,.9);flex-shrink:0}
+.chat-input-box{display:flex;align-items:flex-end;gap:10px;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--border);
+  border-radius:16px;padding:10px 14px;transition:.25s}
+.chat-input-box:focus-within{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.04);
+  box-shadow:0 0 0 3px rgba(139,92,246,.08)}
+.chat-ta{flex:1;background:none;border:none;outline:none;color:var(--text);
+  font-size:14px;font-family:var(--font);resize:none;line-height:1.5;max-height:120px;
+  min-height:24px;overflow-y:auto}
+.chat-ta::placeholder{color:var(--text3)}
+.chat-controls{display:flex;align-items:center;gap:6px}
+.chat-icon-btn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;color:var(--text3);transition:.2s;cursor:pointer;font-size:15px}
+.chat-icon-btn:hover{color:var(--text2);background:rgba(255,255,255,.06)}
+.send-btn{width:38px;height:38px;background:linear-gradient(135deg,#7c3aed,#3b82f6);
+  border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  color:#fff;cursor:pointer;transition:.3s;flex-shrink:0}
+.send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.4)}
+.send-btn:disabled{opacity:.5;pointer-events:none}
+.chat-hint{text-align:center;font-size:11px;color:var(--text3);margin-top:8px}
+
+/* AI right panel — topics */
+.ai-right{width:260px;border-left:1px solid var(--border);
+  background:rgba(6,9,18,.98);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.ar-section{padding:14px 14px 6px;font-size:10.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.ar-topic{display:flex;align-items:center;gap:9px;padding:9px 12px;
+  border-radius:var(--r);margin:1px 6px;cursor:pointer;transition:.2s;
+  font-size:13px;font-weight:500;color:var(--text2)}
+.ar-topic:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.ar-topic.active{background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.15)}
+.ar-ic{font-size:16px;width:20px;text-align:center}
+.ar-stat{display:flex;align-items:center;gap:8px;padding:11px 14px;
+  background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(59,130,246,.04));
+  border:1px solid rgba(139,92,246,.12);border-radius:var(--rl);margin:8px}
+.ars-ic{font-size:24px}
+.ars-val{font-family:var(--display);font-size:20px;font-weight:800;color:var(--purple)}
+.ars-lbl{font-size:11px;color:var(--text3)}
+
+/* ════════════════════════════════════════════════
+   VIEW 3: VIDEO
+════════════════════════════════════════════════ */
+.video-view{display:none;flex:1;overflow:hidden}
+.video-view.on{display:flex}
+.vv-main{flex:1;display:flex;flex-direction:column;overflow-y:auto}
+.vv-player-wrap{position:relative;background:#000;flex-shrink:0}
+.vv-player-inner{position:relative;padding-bottom:56.25%}
+.vv-player-inner iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.vv-overlay{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,transparent 80%,rgba(0,0,0,.8))}
+.vv-prev-next{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);
+  display:flex;justify-content:space-between;padding:0 16px;pointer-events:none}
+.vv-nav-btn{width:40px;height:40px;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;cursor:pointer;pointer-events:all;transition:.2s;border:1px solid rgba(255,255,255,.1);font-size:16px}
+.vv-nav-btn:hover{background:rgba(59,130,246,.6)}
+.vv-bottom{display:none;position:absolute;bottom:0;left:0;right:0;padding:16px;
+  background:linear-gradient(transparent,rgba(0,0,0,.9))}
+.vv-progress{height:3px;background:rgba(255,255,255,.2);border-radius:2px;margin-bottom:10px;cursor:pointer;position:relative}
+.vv-prog-fill{height:100%;background:var(--grad);border-radius:2px;width:30%}
+.vv-info{padding:18px 20px}
+.vi-title{font-family:var(--display);font-size:19px;font-weight:800;margin-bottom:8px}
+.vi-meta{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--text2);margin-bottom:14px;flex-wrap:wrap}
+.vi-meta-item{display:flex;align-items:center;gap:5px}
+.vi-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.vi-tag{padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600}
+.vi-desc{font-size:14px;color:var(--text2);line-height:1.75;border-top:1px solid var(--border);padding-top:14px}
+.vi-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.vi-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;
+  border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:.25s;border:1px solid transparent}
+.vi-btn-pri{background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.25)}
+.vi-btn-pri:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.4)}
+.vi-btn-sec{background:var(--card2);border-color:var(--border);color:var(--text2)}
+.vi-btn-sec:hover{color:var(--text);border-color:rgba(255,255,255,.1)}
+
+.vv-sidebar{width:310px;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.vs-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.vs-header h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.vs-header p{font-size:12px;color:var(--text3)}
+.vs-prog-bar{height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:10px;overflow:hidden}
+.vs-prog-fill{height:100%;background:var(--grad);border-radius:2px;width:38%}
+
+.vs-list{overflow-y:auto;flex:1}
+.vs-section-title{padding:12px 16px 5px;font-size:10.5px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.lesson-row{display:flex;align-items:center;gap:11px;padding:10px 14px;
+  cursor:pointer;transition:.15s;border-bottom:1px solid rgba(255,255,255,.025)}
+.lesson-row:hover{background:rgba(255,255,255,.025)}
+.lesson-row.active{background:rgba(59,130,246,.07);border-left:2px solid var(--blue)}
+.lesson-row.active .lr-num{background:var(--grad);color:#fff}
+.lr-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:.2s}
+.lr-done{background:rgba(16,185,129,.12);color:var(--green)}
+.lr-lock{background:rgba(255,255,255,.04);color:var(--text3)}
+.lr-cur{background:var(--grad);color:#fff}
+.lr-info{flex:1;min-width:0}
+.lr-title{font-size:13px;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr-meta{font-size:11px;color:var(--text3);display:flex;gap:8px}
+.lr-thumb{width:52px;height:34px;border-radius:6px;object-fit:cover;background:#000;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.06)}
+
+/* ════════════════════════════════════════════════
+   VIEW 4: TESTS
+════════════════════════════════════════════════ */
+.test-view{display:none;flex:1;overflow-y:auto}
+.test-view.on{display:flex;flex-direction:column}
+.test-inner{max-width:780px;margin:0 auto;width:100%;padding:24px}
+.test-hero{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(6,182,212,.04));
+  border:1px solid rgba(16,185,129,.15);border-radius:var(--rx);padding:22px 26px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.th-left h2{font-family:var(--display);font-size:22px;font-weight:900;margin-bottom:5px}
+.th-left p{font-size:14px;color:var(--text2)}
+.th-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.th-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:99px;font-size:12.5px;font-weight:600}
+.th-timer{text-align:center;background:rgba(0,0,0,.3);border:1px solid var(--border);
+  border-radius:14px;padding:14px 20px}
+.timer-val{font-family:var(--display);font-size:32px;font-weight:900;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.timer-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+
+.q-progress{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.q-prog-bar{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.q-prog-fill{height:100%;background:var(--grad);border-radius:3px;transition:width .4s ease}
+.q-prog-text{font-size:12px;font-weight:600;color:var(--text2)}
+
+.q-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--rx);
+  padding:26px;margin-bottom:14px;animation:qIn .35s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes qIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.q-num-badge{padding:3px 10px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);
+  border-radius:99px;font-size:11.5px;font-weight:700;color:var(--blue)}
+.q-diff{font-size:11.5px;font-weight:600}
+.q-text{font-size:16.5px;font-weight:600;line-height:1.55;margin-bottom:16px;color:var(--text)}
+.q-code-block{background:rgba(0,0,0,.5);border:1px solid rgba(59,130,246,.12);border-radius:10px;
+  padding:14px 16px;font-family:var(--mono);font-size:13px;color:#e2e8f0;margin-bottom:18px;
+  overflow-x:auto;white-space:pre;line-height:1.6}
+.q-options{display:flex;flex-direction:column;gap:9px}
+.q-opt{display:flex;align-items:center;gap:13px;padding:13px 16px;
+  background:rgba(255,255,255,.025);border:1.5px solid rgba(255,255,255,.06);
+  border-radius:12px;cursor:pointer;transition:.22s;text-align:left;width:100%}
+.q-opt:hover{background:rgba(59,130,246,.07);border-color:var(--bblue);transform:translateX(3px)}
+.q-opt.sel{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.4);color:var(--text)}
+.q-opt.ok{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.4);pointer-events:none}
+.q-opt.err{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);pointer-events:none}
+.q-opt.dim{pointer-events:none;opacity:.55}
+.opt-ltr{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12.5px;font-weight:800;background:rgba(255,255,255,.06);
+  flex-shrink:0;transition:.2s}
+.q-opt.sel .opt-ltr{background:rgba(59,130,246,.25);color:var(--blue)}
+.q-opt.ok .opt-ltr{background:rgba(16,185,129,.2);color:var(--green)}
+.q-opt.err .opt-ltr{background:rgba(239,68,68,.15);color:var(--red)}
+.opt-txt{font-size:14px;font-weight:500;flex:1}
+.q-explain-box{margin-top:13px;padding:13px 15px;background:rgba(16,185,129,.06);
+  border:1px solid rgba(16,185,129,.18);border-radius:10px;font-size:13.5px;
+  color:var(--text2);line-height:1.65;display:none}
+.q-explain-box strong{color:var(--green)}
+
+.test-footer{display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:12px}
+.btn-p{padding:11px 22px;background:var(--card2);border:1px solid var(--border);
+  color:var(--text2);border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-p:hover{color:var(--text);border-color:rgba(255,255,255,.12)}
+.btn-pri{padding:13px 32px;background:var(--grad);color:#fff;border:none;
+  border-radius:var(--r);font-size:14.5px;font-weight:700;cursor:pointer;transition:.3s}
+.btn-pri:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.35)}
+
+.result-hero{background:var(--card2);border:1px solid var(--border);
+  border-radius:var(--rx);padding:40px;text-align:center;margin-bottom:20px;
+  animation:heroIn .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes heroIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.rh-score{font-family:var(--display);font-size:88px;font-weight:900;line-height:1;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.rh-label{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:8px}
+.rh-sub{font-size:15px;color:var(--text2);margin-bottom:24px}
+.rh-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.rh-badge{padding:8px 18px;border-radius:99px;font-size:13px;font-weight:700}
+.rh-confetti{font-size:40px;animation:confetti 1s ease both}
+@keyframes confetti{0%{transform:scale(0) rotate(-10deg)}60%{transform:scale(1.2) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+
+/* ════════════════════════════════════════════════
+   VIEW 5: CODE EDITOR
+════════════════════════════════════════════════ */
+.editor-view{display:none;flex:1;overflow:hidden}
+.editor-view.on{display:flex}
+.ev-files{width:200px;background:rgba(4,7,14,.98);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.ef-header{padding:12px 14px;border-bottom:1px solid var(--border);
+  font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.ef-item{display:flex;align-items:center;gap:8px;padding:9px 14px;
+  cursor:pointer;font-size:13px;font-weight:500;transition:.15s;color:var(--text2)}
+.ef-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.ef-item.active{background:rgba(59,130,246,.08);color:var(--cyan);border-right:2px solid var(--blue)}
+.ef-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ef-section{padding:12px 14px 5px;font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.6px;color:var(--text3);
+  border-top:1px solid var(--border);margin-top:4px}
+.ex-item{margin:4px 8px;padding:8px 10px;border-radius:8px;cursor:pointer;
+  transition:.2s;border:1px solid var(--border)}
+.ex-item:hover{border-color:var(--bblue)}
+.ex-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.ex-sub{font-size:10.5px;color:var(--text3)}
+
+.ev-editor{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.ee-toolbar{display:flex;align-items:center;gap:8px;padding:9px 14px;
+  border-bottom:1px solid var(--border);background:rgba(0,0,0,.3);flex-shrink:0}
+.ee-dots{display:flex;gap:6px;margin-right:4px}
+.ee-dot{width:11px;height:11px;border-radius:50%}
+.ee-lang-sel{padding:5px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:7px;color:var(--text2);font-size:12.5px;font-family:var(--font);outline:none;cursor:pointer}
+.ee-lang-sel option{background:#0a1120}
+.ee-run{display:flex;align-items:center;gap:7px;padding:7px 16px;
+  background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border:none;
+  border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;transition:.3s}
+.ee-run:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(16,185,129,.35)}
+.ee-run:disabled{opacity:.6;pointer-events:none}
+.ee-fmt{display:flex;align-items:center;gap:6px;padding:7px 14px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text2);
+  border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.2s}
+.ee-fmt:hover{color:var(--text);border-color:rgba(255,255,255,.1)}
+.ee-status{margin-left:auto;font-size:11.5px;color:var(--text3);font-family:var(--mono);
+  padding:4px 10px;background:rgba(255,255,255,.03);border-radius:6px}
+
+.ee-code-wrap{flex:1;display:flex;min-height:0;position:relative}
+.ee-gutter{padding:14px 10px;background:rgba(0,0,0,.35);color:rgba(148,163,184,.3);
+  font-family:var(--mono);font-size:12.5px;line-height:1.65;text-align:right;
+  min-width:46px;user-select:none;border-right:1px solid var(--border);overflow:hidden;flex-shrink:0}
+.ee-textarea{flex:1;padding:14px 16px;background:rgba(0,0,0,.25);
+  color:#e2e8f0;font-family:var(--mono);font-size:13px;line-height:1.65;
+  border:none;outline:none;resize:none;tab-size:2;caret-color:var(--cyan);
+  overflow-y:auto;white-space:pre;word-wrap:normal;overflow-x:auto;spellcheck:false}
+.ee-textarea::selection{background:rgba(59,130,246,.25)}
+
+.ee-output{height:220px;border-top:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.eo-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:rgba(0,0,0,.4);border-bottom:1px solid var(--border);flex-shrink:0}
+.eo-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.eo-badge{font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:700}
+.eo-ok{background:rgba(16,185,129,.12);color:var(--green)}
+.eo-err{background:rgba(239,68,68,.12);color:var(--red)}
+.eo-body{flex:1;padding:12px 16px;font-family:var(--mono);font-size:12.5px;overflow-y:auto;line-height:1.75}
+.eo-line-out{color:#e2e8f0;display:block}
+.eo-line-err{color:var(--red);display:block}
+.eo-line-info{color:var(--cyan);display:block;opacity:.8}
+.eo-line-warn{color:var(--yellow);display:block}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .vv-sidebar{width:260px}
+  .ai-right{display:none}
+  .ov-cards{grid-template-columns:1fr 1fr}
+  .ov-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .topnav{padding:0 12px}
+  .tn-center{display:none}
+  .ov-welcome{flex-direction:column}
+  .ov-cards{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ TOP NAV ═══════════════════ -->
+<nav class="topnav">
+  <div class="tn-logo">
+    <div class="tn-icon">IT</div>
+    <div class="tn-name">IT<span>Course</span></div>
+  </div>
+
+  <div class="tn-center">
+    <button class="tab-btn active" id="nb-overview" onclick="setView('overview')">
+      <div class="tb-dot"></div> 📊 Dashboard
+    </button>
+    <button class="tab-btn" id="nb-ai" onclick="setView('ai')">
+      <div class="tb-dot"></div> 🤖 AI Teacher
+    </button>
+    <button class="tab-btn" id="nb-video" onclick="setView('video')">
+      <div class="tb-dot"></div> 🎥 Video
+    </button>
+    <button class="tab-btn" id="nb-test" onclick="setView('test')">
+      <div class="tb-dot"></div> 🧪 Test
+      <span class="tb-badge">5</span>
+    </button>
+    <button class="tab-btn" id="nb-editor" onclick="setView('editor')">
+      <div class="tb-dot"></div> 💻 Editor
+    </button>
+  </div>
+
+  <div class="tn-right">
+    <div class="icon-btn" title="Bildirishnomalar">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1.5A4.5 4.5 0 0 0 3.5 6v3L2 11h12l-1.5-2V6A4.5 4.5 0 0 0 8 1.5z" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M6.5 12.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <div class="notif-dot"></div>
+    </div>
+    <div class="tn-avatar">
+      <div class="av-ring" id="userAv">U</div>
+      <span class="av-name" id="userName">Foydalanuvchi</span>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M5 7H12M9 4L12 7L9 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M7 2H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      Chiqish
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+  <aside class="sidebar">
+    <div class="sb-sec">Menyu</div>
+    <div class="sb-item active" id="sb-overview" onclick="setView('overview')">
+      <span class="sb-ic">📊</span> Dashboard
+    </div>
+    <div class="sb-item ai-pulse" id="sb-ai" onclick="setView('ai')">
+      <span class="sb-ic">🤖</span> AI Teacher
+    </div>
+    <div class="sb-item" id="sb-video" onclick="setView('video')">
+      <span class="sb-ic">🎥</span> Video Darslar
+    </div>
+    <div class="sb-item" id="sb-test" onclick="setView('test')">
+      <span class="sb-ic">🧪</span> Testlar
+      <span class="sb-badge">5</span>
+    </div>
+    <div class="sb-item" id="sb-editor" onclick="setView('editor')">
+      <span class="sb-ic">💻</span> Kod Editor
+    </div>
+
+    <div class="sb-sec" style="margin-top:8px">Mening Kurslarim</div>
+    <div class="sb-course active" onclick="selectCourse(0)">
+      <div class="sc-top"><span class="sc-emoji">🐍</span><span class="sc-title">Python — Noldan Professional</span></div>
+      <div class="sc-prog"><div class="sc-fill" style="width:38%"></div></div>
+      <div class="sc-meta"><span>38% bajarildi</span><span>·</span><span>18/48 dars</span></div>
+    </div>
+    <div class="sb-course" onclick="selectCourse(1)">
+      <div class="sc-top"><span class="sc-emoji">⚡</span><span class="sc-title">JavaScript + React</span></div>
+      <div class="sc-prog"><div class="sc-fill" style="width:12%"></div></div>
+      <div class="sc-meta"><span>12% bajarildi</span><span>·</span><span>5/42 dars</span></div>
+    </div>
+    <div class="sb-course" onclick="selectCourse(2)">
+      <div class="sc-top"><span class="sc-emoji">🤖</span><span class="sc-title">Machine Learning & AI</span></div>
+      <div class="sc-prog"><div class="sc-fill" style="width:0%"></div></div>
+      <div class="sc-meta"><span>Boshlanmagan</span></div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════ CONTENT ═══════════════════ -->
+  <div class="content">
+
+    <!-- ══════════ OVERVIEW ══════════ -->
+    <div class="view on" id="view-overview">
+      <div class="overview">
+        <div class="ov-welcome">
+          <div>
+            <div class="ov-w-title">Xush kelibsiz, <span id="grName">Siz</span>! 👋</div>
+            <div class="ov-w-sub">Bugun ham yangi bilim olishga tayyormisiz? Kurs — 38% bajarildi</div>
+          </div>
+          <div class="ov-stats">
+            <div class="os-item"><span class="os-val">🔥 14</span><div class="os-lbl">Streak kun</div></div>
+            <div class="os-item"><span class="os-val">18</span><div class="os-lbl">Dars tugatildi</div></div>
+            <div class="os-item"><span class="os-val">92%</span><div class="os-lbl">Test o'rtacha</div></div>
+          </div>
+        </div>
+
+        <div class="ov-cards">
+          <div class="ov-card">
+            <div class="oc-val" style="color:var(--blue)">18</div>
+            <div class="oc-lbl">Tugatilgan darslar</div>
+            <div class="oc-trend" style="color:var(--green)">↑ +3 bu hafta</div>
+          </div>
+          <div class="ov-card">
+            <div class="oc-val" style="color:var(--green)">92%</div>
+            <div class="oc-lbl">Test natijalari</div>
+            <div class="oc-trend" style="color:var(--green)">↑ +8% o'sdi</div>
+          </div>
+          <div class="ov-card">
+            <div class="oc-val" style="color:var(--yellow)">14🔥</div>
+            <div class="oc-lbl">Ketma-ket kunlar</div>
+            <div class="oc-trend" style="color:var(--yellow)">Rekord!</div>
+          </div>
+          <div class="ov-card">
+            <div class="oc-val" style="color:var(--purple)">2h 40m</div>
+            <div class="oc-lbl">Bugungi vaqt</div>
+            <div class="oc-trend" style="color:var(--blue)">↑ Faol</div>
+          </div>
+        </div>
+
+        <div class="ov-quick">
+          <div class="qb qb-ai" onclick="setView('ai')">🤖 AI Teacher bilan gaplash</div>
+          <div class="qb qb-vid" onclick="setView('video')">▶ Darsni davom ettir</div>
+          <div class="qb qb-test" onclick="setView('test')">🧪 Test yech</div>
+          <div class="qb qb-code" onclick="setView('editor')">💻 Kod yoz</div>
+        </div>
+
+        <div class="ov-grid">
+          <div class="card-box">
+            <div class="cb-head">📈 Haftalik faollik
+              <span class="cb-head-btn">Batafsil</span>
+            </div>
+            <div class="chart-bars">
+              <div class="bar-w"><div class="bar-f" style="height:40%"></div><div class="bar-lbl">Du</div></div>
+              <div class="bar-w"><div class="bar-f" style="height:72%"></div><div class="bar-lbl">Se</div></div>
+              <div class="bar-w"><div class="bar-f" style="height:55%"></div><div class="bar-lbl">Ch</div></div>
+              <div class="bar-w"><div class="bar-f" style="height:90%"></div><div class="bar-lbl">Pa</div></div>
+              <div class="bar-w"><div class="bar-f" style="height:65%"></div><div class="bar-lbl">Ju</div></div>
+              <div class="bar-w"><div class="bar-f" style="height:22%;background:rgba(255,255,255,.08)"></div><div class="bar-lbl">Sh</div></div>
+              <div class="bar-w"><div class="bar-f" style="height:5%;background:rgba(255,255,255,.05);min-height:4px"></div><div class="bar-lbl">Ya</div></div>
+            </div>
+          </div>
+          <div class="card-box">
+            <div class="cb-head">🏆 Yutuqlar</div>
+            <div class="achievement-list">
+              <div class="ach-item" style="background:rgba(245,158,11,.06);border-radius:10px">
+                <span class="ach-icon">🔥</span>
+                <div><div class="ach-title">14 kun streak!</div><div class="ach-sub">Har kun o'qiyapsan</div></div>
+              </div>
+              <div class="ach-item" style="background:rgba(16,185,129,.05);border-radius:10px">
+                <span class="ach-icon">✅</span>
+                <div><div class="ach-title">100% test natijalari</div><div class="ach-sub">3 ta ketma-ket</div></div>
+              </div>
+              <div class="ach-item" style="background:rgba(59,130,246,.05);border-radius:10px">
+                <span class="ach-icon">⚡</span>
+                <div><div class="ach-title">Tez o'quvchi</div><div class="ach-sub">5 dars/kun</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         AI TEACHER VIEW
+    ══════════════════════════════════ -->
+    <div class="view ai-view" id="view-ai">
+      <div class="ai-left">
+        <!-- AI Header -->
+        <div class="ai-header">
+          <div class="ai-head-left">
+            <div class="ai-avatar">🧠<div class="ai-status-dot"></div></div>
+            <div class="ai-head-info">
+              <h3>IT Course AI Teacher</h3>
+              <p>Faol · Javob berish tayyor</p>
+            </div>
+          </div>
+          <div class="ai-actions">
+            <button class="ai-act-btn" onclick="clearChat()">🗑 Tozalash</button>
+            <button class="ai-act-btn" onclick="setView('editor')">💻 Editor</button>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-area" id="chatArea">
+          <!-- Welcome message -->
+          <div class="msg ai">
+            <div class="msg-av ai-av">🧠</div>
+            <div class="msg-body">
+              <div class="msg-name">AI Teacher</div>
+              <div class="msg-bubble">
+                <p>Assalom! 👋 Men <strong>IT Course AI Teacher</strong>man — siz bilan birga dasturlashni o'rganish uchun shu yerdaman.</p>
+                <p>Menga quyidagilarni so'rashingiz mumkin:</p>
+                <ul>
+                  <li>🐍 Python, JavaScript, HTML/CSS savollari</li>
+                  <li>💡 Kod tushuntirish va debug qilish</li>
+                  <li>📚 Mavzular bo'yicha misollar</li>
+                  <li>🧪 Test savollariga tayyorlanish</li>
+                  <li>🚀 Loyiha yaratish bo'yicha maslahat</li>
+                </ul>
+                <p>Qaysi mavzuni o'rganmoqchisiz? 😊</p>
+              </div>
+              <div class="msg-time">Hozir</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="suggestions">
+          <div class="sug-label">💡 Tavsiya etilgan savollar</div>
+          <div class="sug-chips">
+            <div class="sug-chip" onclick="sendSug(this)">Python list nima?</div>
+            <div class="sug-chip" onclick="sendSug(this)">for loop qanday ishlaydi?</div>
+            <div class="sug-chip" onclick="sendSug(this)">JavaScript vs Python farqi?</div>
+            <div class="sug-chip" onclick="sendSug(this)">Funksiya qanday yaratiladi?</div>
+            <div class="sug-chip" onclick="sendSug(this)">OOP nima?</div>
+            <div class="sug-chip" onclick="sendSug(this)">if-else misol ber</div>
+          </div>
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input-wrap">
+          <div class="chat-input-box">
+            <textarea class="chat-ta" id="chatInput" placeholder="Savol yozing... (masalan: Python'da list qanday ishlaydi?)"
+              rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+            <div class="chat-controls">
+              <button class="chat-icon-btn" title="Kod misoli so'rash" onclick="insertCode()">{ }</button>
+              <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M14 8L2 2l3 6-3 6 12-6z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="chat-hint">⌨️ Enter — yuborish · Shift+Enter — yangi qator</div>
+        </div>
+      </div>
+
+      <!-- AI Right Panel -->
+      <div class="ai-right">
+        <div class="ar-section">📊 Suhbat statistikasi</div>
+        <div class="ar-stat">
+          <div>
+            <div class="ars-val" id="msgCount">1</div>
+            <div class="ars-lbl">Xabarlar</div>
+          </div>
+          <div class="ars-ic">💬</div>
+        </div>
+        <div class="ar-stat" style="background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(6,182,212,.04));border-color:rgba(16,185,129,.12)">
+          <div>
+            <div class="ars-val" style="color:var(--green)" id="learnScore">92%</div>
+            <div class="ars-lbl">O'rganish ball</div>
+          </div>
+          <div class="ars-ic">🎯</div>
+        </div>
+
+        <div class="ar-section" style="margin-top:8px">📚 Mavzular</div>
+        <div class="ar-topic active" onclick="setTopic(this,'python')" id="topic-python">
+          <span class="ar-ic">🐍</span> Python
+        </div>
+        <div class="ar-topic" onclick="setTopic(this,'js')" id="topic-js">
+          <span class="ar-ic">⚡</span> JavaScript
+        </div>
+        <div class="ar-topic" onclick="setTopic(this,'web')" id="topic-web">
+          <span class="ar-ic">🌐</span> HTML & CSS
+        </div>
+        <div class="ar-topic" onclick="setTopic(this,'algo')" id="topic-algo">
+          <span class="ar-ic">🔢</span> Algoritmlar
+        </div>
+        <div class="ar-topic" onclick="setTopic(this,'db')" id="topic-db">
+          <span class="ar-ic">🗄️</span> Ma'lumotlar bazasi
+        </div>
+        <div class="ar-topic" onclick="setTopic(this,'git')" id="topic-git">
+          <span class="ar-ic">🌿</span> Git & GitHub
+        </div>
+
+        <div class="ar-section" style="margin-top:8px">⚡ Tez savollar</div>
+        <div class="ar-topic" onclick="quickAsk('Python print funksiyasi')">
+          <span class="ar-ic">▶</span> print() funksiyasi
+        </div>
+        <div class="ar-topic" onclick="quickAsk('Python range funksiyasi misol')">
+          <span class="ar-ic">▶</span> range() funksiyasi
+        </div>
+        <div class="ar-topic" onclick="quickAsk('JavaScript arrow function nima')">
+          <span class="ar-ic">▶</span> Arrow function
+        </div>
+        <div class="ar-topic" onclick="quickAsk('async await nima va qanday ishlaydi')">
+          <span class="ar-ic">▶</span> Async / Await
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         VIDEO VIEW
+    ══════════════════════════════════ -->
+    <div class="view video-view" id="view-video">
+      <div class="vv-main">
+        <div class="vv-player-wrap">
+          <div class="vv-player-inner">
+            <iframe id="ytFrame"
+              src="https://www.youtube.com/embed/rfscVS0vtbw"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+            <div class="vv-overlay"></div>
+            <div class="vv-prev-next">
+              <div class="vv-nav-btn" onclick="prevLesson()" title="Oldingi dars">‹</div>
+              <div class="vv-nav-btn" onclick="nextLesson()" title="Keyingi dars">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="vv-info">
+          <div class="vi-title" id="vidTitle">Python ga kirish — Asoslar va muhit sozlash</div>
+          <div class="vi-meta">
+            <div class="vi-meta-item">🎥 <span id="vidNum">Dars 1 / 48</span></div>
+            <div class="vi-meta-item">⏱ <span id="vidDur">28:46</span></div>
+            <div class="vi-meta-item">👁 <span id="vidViews">12,847 ko'rishlar</span></div>
+            <div class="vi-meta-item">👨‍🏫 <span id="vidInst">Akbar Karimov</span></div>
+          </div>
+          <div class="vi-tags" id="vidTags">
+            <span class="vi-tag" style="background:rgba(251,191,36,.1);color:#fbbf24">Python</span>
+            <span class="vi-tag" style="background:rgba(59,130,246,.1);color:#3b82f6">Boshlang'ich</span>
+          </div>
+          <div class="vi-desc" id="vidDesc">
+            Bu darsda Python dasturlash tilini o'rganishni boshlaymiz. Python nima, nima uchun ishlatiladi, qanday o'rnatiladi va birinchi "Salom, Dunyo!" programmasini yozamiz. Dars amaliy ko'rsatmalar va tushuntirishlar bilan boyitilgan.
+          </div>
+          <div class="vi-actions">
+            <button class="vi-btn vi-btn-pri" onclick="nextLesson()">▶ Keyingi dars</button>
+            <button class="vi-btn vi-btn-sec" onclick="markDone()">✅ Tugallandi</button>
+            <button class="vi-btn vi-btn-sec" onclick="setView('ai')">🤖 AI ga so'ra</button>
+            <button class="vi-btn vi-btn-sec" onclick="setView('editor')">💻 Mashq qil</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vv-sidebar">
+        <div class="vs-header">
+          <h3>🐍 Python Kursi</h3>
+          <p>48 ta dars · 38% bajarildi</p>
+          <div class="vs-prog-bar"><div class="vs-prog-fill" id="courseProgressBar"></div></div>
+        </div>
+        <div class="vs-list" id="lessonList"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         TEST VIEW
+    ══════════════════════════════════ -->
+    <div class="view test-view" id="view-test">
+      <div class="test-inner">
+        <div class="test-hero">
+          <div class="th-left">
+            <h2>🧪 Python Asoslari Testi</h2>
+            <p>Bilimingizni sinab ko'ring! Har savol uchun eng to'g'ri javobni tanlang.</p>
+            <div class="th-chips">
+              <div class="th-chip">⏱ 10 daqiqa</div>
+              <div class="th-chip">📝 5 savol</div>
+              <div class="th-chip">🏆 100 ball</div>
+              <div class="th-chip">✅ O'tish: 60%</div>
+            </div>
+          </div>
+          <div class="th-timer">
+            <div class="timer-val" id="timerVal">10:00</div>
+            <div class="timer-lbl">Qolgan vaqt</div>
+          </div>
+        </div>
+
+        <div class="q-progress">
+          <div class="q-prog-bar"><div class="q-prog-fill" id="qProgFill" style="width:0%"></div></div>
+          <div class="q-prog-text" id="qProgText">0 / 5</div>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <div class="test-footer">
+          <button class="btn-p" onclick="resetQuiz()">🔄 Qayta boshlash</button>
+          <button class="btn-pri" onclick="submitQuiz()" id="submitBtn">✅ Topshirish</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         EDITOR VIEW
+    ══════════════════════════════════ -->
+    <div class="view editor-view" id="view-editor">
+      <div class="ev-files">
+        <div class="ef-header">📁 Explorer</div>
+        <div class="ef-item active" onclick="openFile('main.py','python',this)">
+          <div class="ef-dot" style="background:#fbbf24"></div>🐍 main.py
+        </div>
+        <div class="ef-item" onclick="openFile('app.js','javascript',this)">
+          <div class="ef-dot" style="background:#f59e0b"></div>⚡ app.js
+        </div>
+        <div class="ef-item" onclick="openFile('index.html','html',this)">
+          <div class="ef-dot" style="background:#f97316"></div>🌐 index.html
+        </div>
+        <div class="ef-item" onclick="openFile('style.css','css',this)">
+          <div class="ef-dot" style="background:#3b82f6"></div>🎨 style.css
+        </div>
+        <div class="ef-item" onclick="openFile('fibonacci.py','python',this)">
+          <div class="ef-dot" style="background:#10b981"></div>🔢 fibonacci.py
+        </div>
+
+        <div class="ef-section">⚡ Mashqlar</div>
+        <div class="ex-item" onclick="loadEx(0)" style="background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.15)">
+          <div class="ex-title" style="color:#10b981">✅ 1. Salom Dunyo</div>
+          <div class="ex-sub">Boshlang'ich</div>
+        </div>
+        <div class="ex-item" onclick="loadEx(1)" style="background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.12)">
+          <div class="ex-title" style="color:#3b82f6">▶ 2. Kalkulyator</div>
+          <div class="ex-sub">O'rta daraja</div>
+        </div>
+        <div class="ex-item" onclick="loadEx(2)" style="background:rgba(139,92,246,.05);border-color:rgba(139,92,246,.1)">
+          <div class="ex-title" style="color:#8b5cf6">⚡ 3. Fibonacci</div>
+          <div class="ex-sub">Rekursiya</div>
+        </div>
+        <div class="ex-item" onclick="loadEx(3)" style="background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.1)">
+          <div class="ex-title" style="color:#f59e0b">🔒 4. Bubble Sort</div>
+          <div class="ex-sub">Algoritmlar</div>
+        </div>
+      </div>
+
+      <div class="ev-editor">
+        <div class="ee-toolbar">
+          <div class="ee-dots">
+            <div class="ee-dot" style="background:#ef4444"></div>
+            <div class="ee-dot" style="background:#f59e0b"></div>
+            <div class="ee-dot" style="background:#10b981"></div>
+          </div>
+          <select class="ee-lang-sel" id="edLang" onchange="langChanged()">
+            <option value="python">🐍 Python 3</option>
+            <option value="javascript">⚡ JavaScript</option>
+            <option value="html">🌐 HTML</option>
+            <option value="css">🎨 CSS</option>
+          </select>
+          <button class="ee-run" onclick="runCode()" id="runBtn">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1.5L10 6L2 10.5V1.5Z" fill="currentColor"/></svg>
+            Ishga tushirish
+          </button>
+          <button class="ee-fmt" onclick="formatCode()">✨ Format</button>
+          <div class="ee-status" id="edStatus">● Tayyor</div>
+        </div>
+
+        <div class="ee-code-wrap">
+          <div class="ee-gutter" id="gutter">1</div>
+          <textarea class="ee-textarea" id="codeEditor" spellcheck="false"
+            oninput="syncGutter()" onkeydown="edKeyDown(event)" onscroll="syncScroll()"></textarea>
+        </div>
+
+        <div class="ee-output">
+          <div class="eo-bar">
+            <div class="eo-title">🖥 Terminal Output</div>
+            <div class="eo-badge eo-ok" id="eoBadge">● Tayyor</div>
+            <button onclick="clearOut()" style="margin-left:auto;font-size:11px;color:var(--text3);cursor:pointer;padding:2px 8px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:5px">Tozala</button>
+          </div>
+          <div class="eo-body" id="outputArea">
+            <span class="eo-line-info">$ Kodni yozing va ▶ "Ishga tushirish" tugmasini bosing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+
+<script>
+/* ════════════════════════════════════════════
+   AUTH
+════════════════════════════════════════════ */
+const user = JSON.parse(localStorage.getItem('itcUser') || '{}');
+if (!user.email) window.location.href = 'login.html';
+if (user.isAdmin) window.location.href = 'admin.html';
+const uname = user.name || user.email || 'Foydalanuvchi';
+document.getElementById('userName').textContent = uname.split(' ')[0];
+document.getElementById('grName').textContent = uname.split(' ')[0];
+document.getElementById('userAv').textContent = uname[0].toUpperCase();
+function logout() { localStorage.removeItem('itcUser'); window.location.href = 'login.html'; }
+
+/* ════════════════════════════════════════════
+   VIEW SWITCHING
+════════════════════════════════════════════ */
+const views = ['overview','ai','video','test','editor'];
+function setView(v) {
+  views.forEach(n => {
+    document.getElementById('view-' + n).classList.toggle('on', n === v);
+    const sb = document.getElementById('sb-' + n);
+    if (sb) sb.classList.toggle('active', n === v);
+    const nb = document.getElementById('nb-' + n);
+    if (nb) nb.classList.toggle('active', n === v);
+  });
+  if (v === 'video') renderLessons();
+  if (v === 'test') initQuiz();
+  if (v === 'editor') initEditor();
+  if (v === 'ai') document.getElementById('chatInput').focus();
+}
+function selectCourse(i) {
+  document.querySelectorAll('.sb-course').forEach((c,idx) => c.classList.toggle('active', idx===i));
+  setView('video');
+}
+
+/* ════════════════════════════════════════════
+   AI TEACHER — KNOWLEDGE BASE
+════════════════════════════════════════════ */
+const aiKB = {
+  greet: {
+    patterns: ['salom','assalom','xayr','yaxshimisiz','hi','hello'],
+    respond: () => ({
+      text: `Assalom! 😊 O'rganishni davom ettiryapmizmi? Qaysi mavzuda yordam kerak?`,
+      code: null
+    })
+  },
+  python_print: {
+    patterns: ['print','chiqar','output','koʻrsat','ekran'],
+    respond: () => ({
+      text: `**print()** funksiyasi Python'da ekranga ma'lumot chiqaradi.\n\nKo'p xil usullar mavjud:`,
+      code: { lang: 'Python', body: `# 1. Oddiy string chiqarish
+print("Salom, Dunyo!")
+
+# 2. Raqam chiqarish
+print(42)
+print(3.14)
+
+# 3. Bir nechta qiymat
+print("Ism:", "Akbar", "Yoshi:", 25)
+
+# 4. f-string (zamonaviy usul)
+ism = "Zulfiya"
+yosh = 22
+print(f"Ism: {ism}, Yosh: {yosh}")
+
+# 5. sep va end parametrlari
+print("A", "B", "C", sep="-")   # A-B-C
+print("Salom", end=" ")
+print("Dunyo")                    # Salom Dunyo` }
+    })
+  },
+  python_list: {
+    patterns: ['list','royxat','ro\'yxat','massiv','array'],
+    respond: () => ({
+      text: `**List** — Python'ning eng ko'p ishlatiladigan ma'lumot turi. Turli turdagi elementlarni saqlaydi.`,
+      code: { lang: 'Python', body: `# List yaratish
+sonlar = [1, 2, 3, 4, 5]
+mevalar = ["olma", "nok", "banan"]
+aralash = [1, "salom", True, 3.14]
+
+# Elementga murojaat (indeks 0 dan boshlanadi)
+print(mevalar[0])   # olma
+print(mevalar[-1])  # banan (oxirgi)
+
+# List metodlari
+mevalar.append("uzum")     # oxiriga qo'shish
+mevalar.insert(1, "gilos") # o'rtaga qo'shish
+mevalar.remove("nok")      # o'chirish
+mevalar.sort()             # saralash
+
+# List uzunligi
+print(len(mevalar))
+
+# Slice (kesma)
+print(sonlar[1:4])  # [2, 3, 4]
+
+# List comprehension (pro usul)
+kvadratlar = [x**2 for x in range(1, 6)]
+print(kvadratlar)  # [1, 4, 9, 16, 25]` }
+    })
+  },
+  for_loop: {
+    patterns: ['for','tsikl','loop','takrorlash','sikl','while'],
+    respond: () => ({
+      text: `**for** tsikl — ro'yxat yoki boshqa element bo'yicha takrorlash uchun ishlatiladi.`,
+      code: { lang: 'Python', body: `# 1. Oddiy for tsikl
+for i in range(5):
+    print(i)  # 0, 1, 2, 3, 4
+
+# 2. List bo'yicha
+mevalar = ["olma", "nok", "banan"]
+for meva in mevalar:
+    print(f"🍎 {meva}")
+
+# 3. range bilan (boshlash, tugash, qadam)
+for i in range(0, 10, 2):
+    print(i)  # 0, 2, 4, 6, 8
+
+# 4. enumerate — index bilan birga
+for i, meva in enumerate(mevalar):
+    print(f"{i}. {meva}")
+
+# 5. while tsikl
+n = 0
+while n < 5:
+    print(n)
+    n += 1
+
+# 6. break va continue
+for i in range(10):
+    if i == 3:
+        continue  # 3 ni o'tkazib yuborish
+    if i == 7:
+        break     # 7 da to'xtatish
+    print(i)` }
+    })
+  },
+  function: {
+    patterns: ['funksiya','def','function','metod','method','qaytarish','return'],
+    respond: () => ({
+      text: `**Funksiyalar** — kodni qayta ishlatish imkonini beruvchi bloklar. Python'da **def** kalit so'zi bilan yaratiladi.`,
+      code: { lang: 'Python', body: `# 1. Oddiy funksiya
+def salom():
+    print("Salom, Dunyo!")
+
+salom()  # chaqirish
+
+# 2. Parametrli funksiya
+def greeting(ism, yosh=20):
+    print(f"Assalom {ism}, yosh: {yosh}")
+
+greeting("Akbar")          # Assalom Akbar, yosh: 20
+greeting("Zulfiya", 25)    # Assalom Zulfiya, yosh: 25
+
+# 3. Qiymat qaytaruvchi funksiya
+def kvadrat(son):
+    return son ** 2
+
+natija = kvadrat(7)
+print(natija)  # 49
+
+# 4. Bir nechta qiymat qaytarish
+def hisob(a, b):
+    return a + b, a - b, a * b
+
+qoshish, ayirish, kopaytirish = hisob(10, 3)
+print(qoshish, ayirish, kopaytirish)
+
+# 5. Lambda (bir qatorli funksiya)
+qo_shish = lambda a, b: a + b
+print(qo_shish(5, 3))  # 8` }
+    })
+  },
+  if_else: {
+    patterns: ['if','else','elif','shart','shartli'],
+    respond: () => ({
+      text: `**if-else** — shartli ifodalar. Dasturda qaror qabul qilish uchun ishlatiladi.`,
+      code: { lang: 'Python', body: `# 1. Oddiy if
+yosh = 18
+if yosh >= 18:
+    print("Siz balog'atga yetgansiz")
+
+# 2. if-else
+ball = 75
+if ball >= 90:
+    print("A'lo!")
+elif ball >= 70:
+    print("Yaxshi")
+elif ball >= 60:
+    print("Qoniqarli")
+else:
+    print("Qayta topshiring")
+
+# 3. Mantiqiy operatorlar
+parol_to_g_ri = True
+foydalanuvchi_bor = True
+
+if parol_to_g_ri and foydalanuvchi_bor:
+    print("Xush kelibsiz!")
+
+# 4. Bir qatorli if (ternary)
+status = "Balog'atga yetgan" if yosh >= 18 else "Voyaga yetmagan"
+print(status)
+
+# 5. in operatori
+mevalar = ["olma", "nok", "banan"]
+if "olma" in mevalar:
+    print("Olma mavjud!")` }
+    })
+  },
+  dict: {
+    patterns: ['dict','lugat','lug\'at','kalit','key','value','qiymat'],
+    respond: () => ({
+      text: `**Dictionary** — kalit-qiymat juftlari saqlaydigan ma'lumot turi. JSON ga o'xshaydi.`,
+      code: { lang: 'Python', body: `# Dictionary yaratish
+talaba = {
+    "ism": "Akbar",
+    "yosh": 21,
+    "kurs": "Python",
+    "ball": 95.5
+}
+
+# Qiymatlarga murojaat
+print(talaba["ism"])         # Akbar
+print(talaba.get("yosh"))    # 21 (xavfsiz usul)
+
+# Yangi kalit qo'shish / o'zgartirish
+talaba["shahar"] = "Toshkent"
+talaba["ball"] = 98
+
+# Kalit bor-yo'qligini tekshirish
+if "ism" in talaba:
+    print("Ism mavjud!")
+
+# Dict metodlari
+print(talaba.keys())    # barcha kalitlar
+print(talaba.values())  # barcha qiymatlar
+print(talaba.items())   # juftliklar
+
+# Dict bo'yicha tsikl
+for kalit, qiymat in talaba.items():
+    print(f"{kalit}: {qiymat}")
+
+# Dict comprehension
+sonlar = {x: x**2 for x in range(1, 6)}
+print(sonlar)  # {1:1, 2:4, 3:9, 4:16, 5:25}` }
+    })
+  },
+  oop: {
+    patterns: ['oop','class','sinf','object','obyekt','meros','inheritance','encapsulation'],
+    respond: () => ({
+      text: `**OOP (Object-Oriented Programming)** — ob'yektga yo'naltirilgan dasturlash. Python'da class bilan ishlash:`,
+      code: { lang: 'Python', body: `# Class (Sinf) yaratish
+class Talaba:
+    # Class o'zgaruvchisi (barcha ob'ektlar uchun)
+    maktab = "IT Course"
+    
+    # Konstruktor (__init__)
+    def __init__(self, ism, yosh, kurs):
+        self.ism = ism        # Instansiya o'zgaruvchisi
+        self.yosh = yosh
+        self.kurs = kurs
+        self.ball = 0
+    
+    # Metod
+    def tavsif(self):
+        return f"{self.ism} ({self.yosh}), Kurs: {self.kurs}"
+    
+    def ball_qo_sh(self, miqdor):
+        self.ball += miqdor
+        print(f"{self.ism} ga {miqdor} ball qo'shildi. Jami: {self.ball}")
+    
+    # __str__ metodi
+    def __str__(self):
+        return f"Talaba: {self.ism}"
+
+# Ob'yekt yaratish
+akbar = Talaba("Akbar", 21, "Python")
+zulfiya = Talaba("Zulfiya", 22, "JavaScript")
+
+print(akbar.tavsif())
+akbar.ball_qo_sh(50)
+print(Talaba.maktab)  # IT Course
+
+# Meros (Inheritance)
+class Aspirant(Talaba):
+    def __init__(self, ism, yosh, kurs, loyiha):
+        super().__init__(ism, yosh, kurs)  # ota class
+        self.loyiha = loyiha
+    
+    def tavsif(self):  # overriding
+        return super().tavsif() + f", Loyiha: {self.loyiha}"` }
+    })
+  },
+  javascript: {
+    patterns: ['javascript','js','const','let','var','es6','node'],
+    respond: () => ({
+      text: `**JavaScript** — web dasturlashning asosi. Brauzer va Node.js'da ishlaydi. Python bilan asosiy farqlari:`,
+      code: { lang: 'JavaScript', body: `// 1. O'zgaruvchilar
+const ism = "Akbar";      // o'zgarmas
+let yosh = 21;             // o'zgaruvchan
+var eski = "tavsiya etilmaydi";
+
+// 2. Funksiyalar
+function salom(ism) {
+    return \`Assalom, \${ism}!\`;
+}
+// Arrow function (zamonaviy)
+const kvadrat = (n) => n ** 2;
+
+// 3. Array (Python listga o'xshash)
+const mevalar = ["olma", "nok", "banan"];
+mevalar.push("uzum");        // qo'shish
+mevalar.forEach(m => console.log(m));
+const uzun = mevalar.filter(m => m.length > 3);
+
+// 4. Object (Python dictga o'xshash)
+const talaba = {
+    ism: "Zulfiya",
+    yosh: 22,
+    greet() { return \`Salom, men \${this.ism}\`; }
+};
+
+// 5. Async/Await
+async function malumot_ol() {
+    const response = await fetch('https://api.example.com');
+    const data = await response.json();
+    return data;
+}
+
+// 6. Destructuring
+const { ism: nom, yosh: umr } = talaba;
+const [birinchi, ...qolganlar] = mevalar;` }
+    })
+  },
+  html_css: {
+    patterns: ['html','css','web','sayt','tag','style','div','class'],
+    respond: () => ({
+      text: `**HTML & CSS** — web sahifalar yaratishning asosi. HTML tuzilma, CSS ko'rinish beradi.`,
+      code: { lang: 'HTML', body: `<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Mening Saytim</title>
+    <style>
+        /* CSS uslublar */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f1a;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover { transform: translateY(-4px); }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🚀 IT Course</h1>
+            <p>Dasturlashni o'rganing!</p>
+            <button class="btn" onclick="alert('Xush kelibsiz!')">
+                Boshlash
+            </button>
+        </div>
+    </div>
+</body>
+</html>` }
+    })
+  },
+  algo: {
+    patterns: ['algoritm','sort','saralash','qidiruv','search','binary','bubble','rekursiya'],
+    respond: () => ({
+      text: `**Algoritmlar** — muammolarni yechishning kuchli usullari. Eng muhim misollar:`,
+      code: { lang: 'Python', body: `# 1. Bubble Sort — Pufakcha tartiblash
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+print(bubble_sort([64, 34, 25, 12, 22]))
+
+# 2. Binary Search — Ikkilik qidirish (O(log n))
+def binary_search(arr, target):
+    chap, o'ng = 0, len(arr) - 1
+    while chap <= o'ng:
+        o'rta = (chap + o'ng) // 2
+        if arr[o'rta] == target:
+            return o'rta
+        elif arr[o'rta] < target:
+            chap = o'rta + 1
+        else:
+            o'ng = o'rta - 1
+    return -1
+
+# 3. Rekursiya — Fibonacci
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+
+# 4. Tezroq yechim — memoization
+from functools import lru_cache
+@lru_cache(maxsize=None)
+def fib_fast(n):
+    if n <= 1:
+        return n
+    return fib_fast(n-1) + fib_fast(n-2)
+
+print([fib_fast(i) for i in range(10)])` }
+    })
+  },
+  default: {
+    patterns: [],
+    respond: (q) => ({
+      text: `Sizning savolingizni tushundim! 🤔 Dasturlash bo'yicha quyidagi mavzularda to'liq tushuntira olaman:\n\n**Asosiy mavzular:**\n• Python (o'zgaruvchilar, list, dict, funksiyalar, OOP)\n• JavaScript (ES6+, async/await, DOM)\n• HTML & CSS (semantic HTML, Flexbox, Grid)\n• Algoritmlar (sort, search, rekursiya)\n\n"**${q}**" haqida aniqroq savol bersangiz, kod misollari bilan javob beraman! 💪`,
+      code: null
+    })
+  }
+};
+
+function matchAI(q) {
+  const ql = q.toLowerCase();
+  for (const [, kb] of Object.entries(aiKB)) {
+    if (kb.patterns && kb.patterns.some(p => ql.includes(p))) {
+      return kb.respond(q);
+    }
+  }
+  return aiKB.default.respond(q);
+}
+
+/* ════════════════════════════════════════════
+   AI CHAT LOGIC
+════════════════════════════════════════════ */
+let chatMsgCount = 1;
+let aiTyping = false;
+let currentTopic = 'python';
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function insertCode() {
+  const ta = document.getElementById('chatInput');
+  const v = ta.value;
+  ta.value = v + '\n```python\n# Kod yozing\n```';
+  ta.focus();
+  autoResize(ta);
+}
+
+function sendSug(el) {
+  document.getElementById('chatInput').value = el.textContent;
+  sendMessage();
+}
+
+function quickAsk(q) {
+  document.getElementById('chatInput').value = q;
+  sendMessage();
+}
+
+function setTopic(el, topic) {
+  document.querySelectorAll('.ar-topic').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentTopic = topic;
+}
+
+function clearChat() {
+  const area = document.getElementById('chatArea');
+  area.innerHTML = '';
+  chatMsgCount = 0;
+  document.getElementById('msgCount').textContent = '0';
+  appendAIMsg(`Chat tozalandi! 🧹 Yangi savol bering.`, null);
+}
+
+async function sendMessage() {
+  const ta = document.getElementById('chatInput');
+  const q = ta.value.trim();
+  if (!q || aiTyping) return;
+
+  appendUserMsg(q);
+  ta.value = '';
+  ta.style.height = 'auto';
+  chatMsgCount++;
+  document.getElementById('msgCount').textContent = chatMsgCount;
+
+  aiTyping = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  const typingEl = showTyping();
+  const delay = 1000 + Math.random() * 1200;
+  await sleep(delay);
+
+  typingEl.remove();
+
+  const { text, code } = matchAI(q);
+  appendAIMsg(text, code);
+
+  chatMsgCount++;
+  document.getElementById('msgCount').textContent = chatMsgCount;
+  aiTyping = false;
+  document.getElementById('sendBtn').disabled = false;
+  ta.focus();
+}
+
+function appendUserMsg(text) {
+  const area = document.getElementById('chatArea');
+  const uname = document.getElementById('userAv').textContent;
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `
+    <div class="msg-av user-av">${uname}</div>
+    <div class="msg-body">
+      <div class="msg-name" style="text-align:right">Siz</div>
+      <div class="msg-bubble">${escHtml(text)}</div>
+      <div class="msg-time" style="text-align:right">${getTime()}</div>
+    </div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function appendAIMsg(text, code) {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+
+  const formattedText = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/\n•\s/g, '<br>• ')
+    .replace(/\n/g, '<br>');
+
+  const codeHTML = code ? `
+    <div class="msg-code">
+      <div class="mc-head">
+        <span class="mc-lang">${code.lang}</span>
+        <span class="mc-copy" onclick="copyCode(this)">📋 Nusxa</span>
+      </div>
+      <div class="mc-body">${syntaxHL(code.body, code.lang)}</div>
+    </div>` : '';
+
+  div.innerHTML = `
+    <div class="msg-av ai-av">🧠</div>
+    <div class="msg-body">
+      <div class="msg-name">AI Teacher</div>
+      <div class="msg-bubble"><p>${formattedText}</p>${codeHTML}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px;padding:0 4px">
+        <div style="font-size:10.5px;color:var(--text3)">${getTime()}</div>
+        <div style="margin-left:auto;display:flex;gap:4px">
+          <button style="font-size:14px;cursor:pointer;background:none;border:none;opacity:.5;transition:.2s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=.5" onclick="this.style.opacity=1;this.textContent='👍'">👍</button>
+          <button style="font-size:14px;cursor:pointer;background:none;border:none;opacity:.5;transition:.2s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=.5" onclick="this.style.opacity=1;this.textContent='👎'">👎</button>
+        </div>
+      </div>
+    </div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showTyping() {
+  const area = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = 'typing-msg';
+  div.innerHTML = `
+    <div class="msg-av ai-av">🧠</div>
+    <div class="typing-bubble">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+  return div;
+}
+
+function syntaxHL(code, lang) {
+  let h = escHtml(code);
+  if (lang === 'Python') {
+    h = h.replace(/(#[^\n]*)/g, '<span class="cm">$1</span>');
+    h = h.replace(/\b(def|class|import|from|return|if|elif|else|for|while|in|not|and|or|True|False|None|pass|break|continue|lambda|with|as|try|except|raise|yield|global|nonlocal|async|await)\b/g, '<span class="kw">$1</span>');
+    h = h.replace(/\b([a-z_][a-z0-9_]*)\s*(?=\()/g, '<span class="fn">$1</span>');
+    h = h.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|"[^"]*"|'[^']*')/g, '<span class="st">$1</span>');
+    h = h.replace(/\b(\d+\.?\d*)\b/g, '<span class="nm">$1</span>');
+  } else if (lang === 'JavaScript') {
+    h = h.replace(/(\/\/[^\n]*)/g, '<span class="cm">$1</span>');
+    h = h.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|default|async|await|new|this|typeof|instanceof|in|of|try|catch|throw|true|false|null|undefined)\b/g, '<span class="kw">$1</span>');
+    h = h.replace(/(`[^`]*`|"[^"]*"|'[^']*')/g, '<span class="st">$1</span>');
+    h = h.replace(/\b(\d+\.?\d*)\b/g, '<span class="nm">$1</span>');
+  }
+  return h;
+}
+
+function copyCode(el) {
+  const body = el.closest('.msg-code').querySelector('.mc-body');
+  navigator.clipboard.writeText(body.innerText).then(() => {
+    el.textContent = '✅ Nusxalandi!';
+    setTimeout(() => el.textContent = '📋 Nusxa', 1800);
+  });
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ════════════════════════════════════════════
+   VIDEO — LESSONS DATA
+════════════════════════════════════════════ */
+const lessonsData = [
+  { title: "Python ga kirish va muhit sozlash", dur: "28:46", views: "12,847", done: true, ytId: "rfscVS0vtbw", desc: "Python nima, nima uchun o'rganish kerak, qanday o'rnatish va birinchi dastur.", level: "Boshlang'ich" },
+  { title: "O'zgaruvchilar va ma'lumot turlari", dur: "18:22", views: "10,234", done: true, ytId: "rfscVS0vtbw", desc: "int, float, str, bool turlari, type() funksiyasi va type conversion.", level: "Boshlang'ich" },
+  { title: "Shartlar: if, elif, else", dur: "22:15", views: "9,678", done: false, current: true, ytId: "rfscVS0vtbw", desc: "Shartli ifodalar, mantiqiy operatorlar, nested if.", level: "Boshlang'ich" },
+  { title: "Tsikllar: for va while", dur: "26:40", views: "8,912", done: false, ytId: "rfscVS0vtbw", desc: "range(), break, continue, enumerate bilan ishlash.", level: "O'rta" },
+  { title: "Funksiyalar va rekursiya", dur: "32:18", views: "7,654", done: false, ytId: "rfscVS0vtbw", desc: "def, return, *args, **kwargs, lambda, rekursiv funksiyalar.", level: "O'rta" },
+  { title: "Ro'yxatlar (List)", dur: "24:55", views: "7,123", done: false, ytId: "rfscVS0vtbw", desc: "List metodlari, slicing, comprehension, 2D list.", level: "O'rta" },
+  { title: "Lug'atlar (Dictionary) va To'plamlar (Set)", dur: "28:33", views: "6,891", done: false, ytId: "rfscVS0vtbw", desc: "dict, set, frozenset, Counter.", level: "O'rta" },
+  { title: "OOP: Sinflar va Ob'yektlar", dur: "38:44", views: "6,234", done: false, ytId: "rfscVS0vtbw", desc: "class, __init__, self, meros, polimorfizm, encapsulation.", level: "Yuqori" },
+  { title: "Fayl bilan ishlash (File I/O)", dur: "20:12", views: "5,677", done: false, ytId: "rfscVS0vtbw", desc: "open(), read/write/append, with kontekst menejeri, JSON.", level: "O'rta" },
+  { title: "Xatolarni boshqarish (Exception Handling)", dur: "22:30", views: "5,123", done: false, ytId: "rfscVS0vtbw", desc: "try/except/finally, custom exception, raise.", level: "O'rta" },
+  { title: "Modullar va Kutubxonalar", dur: "25:18", views: "4,893", done: false, ytId: "rfscVS0vtbw", desc: "import, pip, os, sys, datetime, math modullari.", level: "O'rta" },
+  { title: "Dekoratorlar va Generatorlar", dur: "34:22", views: "4,234", done: false, ytId: "rfscVS0vtbw", desc: "@decorator, yield, iterator protokoli, lazy evaluation.", level: "Yuqori" },
+];
+
+let currentLessonIdx = 2;
+
+function renderLessons() {
+  const list = document.getElementById('lessonList');
+  const sections = [
+    { title: "📌 Asoslar (1-5 dars)", lessons: lessonsData.slice(0, 5) },
+    { title: "🔧 O'rta daraja (6-9 dars)", lessons: lessonsData.slice(5, 9) },
+    { title: "🚀 Yuqori daraja (10-12 dars)", lessons: lessonsData.slice(9, 12) },
+  ];
+
+  let html = '';
+  let globalIdx = 0;
+  for (const sec of sections) {
+    html += `<div class="vs-section-title">${sec.title}</div>`;
+    for (const l of sec.lessons) {
+      const idx = globalIdx;
+      const isActive = idx === currentLessonIdx;
+      const numClass = l.done ? 'lr-done' : isActive ? 'lr-cur' : 'lr-lock';
+      const numContent = l.done ? '✓' : isActive ? '▶' : idx + 1;
+      html += `
+        <div class="lesson-row ${isActive ? 'active' : ''}" onclick="playLesson(${idx})">
+          <div class="lr-num ${numClass}">${numContent}</div>
+          <div class="lr-info">
+            <div class="lr-title">${l.title}</div>
+            <div class="lr-meta"><span>⏱ ${l.dur}</span><span>👁 ${l.views}</span></div>
+          </div>
+          <div class="lr-thumb">${l.done ? '✅' : isActive ? '▶️' : '🔒'}</div>
+        </div>`;
+      globalIdx++;
+    }
+  }
+  list.innerHTML = html;
+
+  const cur = lessonsData[currentLessonIdx];
+  document.getElementById('vidTitle').textContent = cur.title;
+  document.getElementById('vidNum').textContent = `Dars ${currentLessonIdx + 1} / ${lessonsData.length}`;
+  document.getElementById('vidDur').textContent = cur.dur;
+  document.getElementById('vidViews').textContent = cur.views + " ko'rishlar";
+  document.getElementById('vidDesc').textContent = cur.desc;
+  document.getElementById('vidTags').innerHTML = `
+    <span class="vi-tag" style="background:rgba(251,191,36,.1);color:#fbbf24">Python</span>
+    <span class="vi-tag" style="background:rgba(59,130,246,.1);color:#3b82f6">${cur.level}</span>`;
+}
+
+function playLesson(idx) {
+  currentLessonIdx = idx;
+  const l = lessonsData[idx];
+  document.getElementById('ytFrame').src = `https://www.youtube.com/embed/${l.ytId}?autoplay=1&rel=0`;
+  renderLessons();
+  document.querySelector('.vv-main').scrollTop = 0;
+}
+
+function nextLesson() {
+  if (currentLessonIdx < lessonsData.length - 1) playLesson(currentLessonIdx + 1);
+}
+function prevLesson() {
+  if (currentLessonIdx > 0) playLesson(currentLessonIdx - 1);
+}
+function markDone() {
+  lessonsData[currentLessonIdx].done = true;
+  renderLessons();
+  showToast('✅ Dars tugallandi! +10 XP');
+}
+
+/* ════════════════════════════════════════════
+   QUIZ
+════════════════════════════════════════════ */
+const questions = [
+  {
+    q: "Python'da qanday komment (izoh) yoziladi?",
+    opts: ["// izoh", "/* izoh */", "# izoh", "<!-- izoh -->"],
+    ans: 2,
+    diff: "Oson",
+    exp: "Python'da # belgisi bilan izoh yoziladi. Bu satr interpreter tomonidan e'tiborga olinmaydi."
+  },
+  {
+    q: "Quyidagi kodning natijasi nima?",
+    code: "x = 10\ny = 3\nprint(x // y)",
+    opts: ["3.33...", "3", "1", "4"],
+    ans: 1,
+    diff: "O'rta",
+    exp: "// operatori — butun son bo'linmasi (integer division). 10 // 3 = 3, qoldiq e'tiborga olinmaydi."
+  },
+  {
+    q: "Python'da ro'yxat (list) qanday yaratiladi?",
+    opts: ["list = (1, 2, 3)", "list = {1, 2, 3}", "list = [1, 2, 3]", "list = <1, 2, 3>"],
+    ans: 2,
+    diff: "Oson",
+    exp: "Python'da list kvadrat qavslar [] bilan yaratiladi. (1,2,3) — tuple, {1,2,3} — set."
+  },
+  {
+    q: "len() funksiyasi nima qaytaradi?",
+    opts: ["Elementlar sonini", "Eng katta elementni", "Jami qiymatni", "Birinchi elementni"],
+    ans: 0,
+    diff: "Oson",
+    exp: "len() funksiyasi list, string, dict yoki boshqa iterable ob'yektning elementlar sonini qaytaradi."
+  },
+  {
+    q: "Quyidagi kod nima chiqaradi?",
+    code: "for i in range(3):\n    print(i)",
+    opts: ["0 1 2 3", "1 2 3", "0\n1\n2", "1\n2\n3"],
+    ans: 2,
+    diff: "O'rta",
+    exp: "range(3) 0, 1, 2 raqamlarini hosil qiladi (3 ta element, 0 dan boshlanadi). Har biri alohida qatorda chiqadi."
+  }
+];
+
+let userAnswers = {};
+let quizSubmitted = false;
+let timerInterval = null;
+let timeLeft = 600;
+
+function initQuiz() {
+  userAnswers = {};
+  quizSubmitted = false;
+  timeLeft = 600;
+  clearInterval(timerInterval);
+  startTimer();
+  renderQuiz();
+}
+
+function startTimer() {
+  document.getElementById('timerVal').textContent = formatTime(timeLeft);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timerVal').textContent = formatTime(timeLeft);
+    if (timeLeft <= 60) {
+      document.getElementById('timerVal').style.color = 'var(--red)';
+    }
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      submitQuiz();
+    }
+  }, 1000);
+}
+
+function formatTime(s) {
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  const answered = Object.keys(userAnswers).length;
+  document.getElementById('qProgFill').style.width = (answered / questions.length * 100) + '%';
+  document.getElementById('qProgText').textContent = `${answered} / ${questions.length}`;
+
+  questions.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    const diffColor = { 'Oson': 'var(--green)', 'O\'rta': 'var(--yellow)', 'Qiyin': 'var(--red)' };
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num-badge">Savol ${qi + 1} / ${questions.length}</div>
+        <div class="q-diff" style="color:${diffColor[q.diff]||'var(--blue)'}">🎯 ${q.diff}</div>
+      </div>
+      <div class="q-text">${q.q}</div>
+      ${q.code ? `<div class="q-code-block">${q.code}</div>` : ''}
+      <div class="q-options" id="opts-${qi}">
+        ${q.opts.map((opt, oi) => `
+          <button class="q-opt ${userAnswers[qi]===oi?'sel':''}" onclick="selectOpt(${qi},${oi})"
+            ${quizSubmitted?'disabled':''}>
+            <div class="opt-ltr">${['A','B','C','D'][oi]}</div>
+            <div class="opt-txt">${opt}</div>
+          </button>`).join('')}
+      </div>
+      <div class="q-explain-box" id="exp-${qi}"><strong>✅ Tushuntirish:</strong> ${q.exp}</div>`;
+    container.appendChild(card);
+  });
+
+  document.getElementById('submitBtn').style.display = quizSubmitted ? 'none' : '';
+}
+
+function selectOpt(qi, oi) {
+  if (quizSubmitted) return;
+  userAnswers[qi] = oi;
+  const answered = Object.keys(userAnswers).length;
+  document.getElementById('qProgFill').style.width = (answered / questions.length * 100) + '%';
+  document.getElementById('qProgText').textContent = `${answered} / ${questions.length}`;
+
+  document.querySelectorAll(`#opts-${qi} .q-opt`).forEach((btn, j) => {
+    btn.classList.toggle('sel', j === oi);
+  });
+}
+
+function submitQuiz() {
+  if (!quizSubmitted && Object.keys(userAnswers).length < questions.length) {
+    if (!confirm('Barcha savollarga javob bermagansiz. Topshirasizmi?')) return;
+  }
+  quizSubmitted = true;
+  clearInterval(timerInterval);
+
+  let score = 0;
+  questions.forEach((q, qi) => {
+    const opts = document.querySelectorAll(`#opts-${qi} .q-opt`);
+    opts.forEach((btn, j) => {
+      btn.disabled = true;
+      if (j === q.ans) btn.classList.add('ok');
+      else if (j === userAnswers[qi]) btn.classList.add('err');
+      else btn.classList.add('dim');
+    });
+    if (userAnswers[qi] === q.ans) score++;
+    document.getElementById(`exp-${qi}`).style.display = 'block';
+  });
+
+  const pct = Math.round(score / questions.length * 100);
+  const passed = pct >= 60;
+
+  const resultDiv = document.createElement('div');
+  resultDiv.className = 'result-hero';
+  resultDiv.innerHTML = `
+    <div class="rh-confetti">${passed ? '🎉' : '📚'}</div>
+    <div class="rh-score">${pct}%</div>
+    <div class="rh-label">${passed ? 'Ajoyib! Test muvaffaqiyatli o\'tildi!' : 'Davom eting! Ko\'proq mashq qiling!'}</div>
+    <div class="rh-sub">${score} ta to'g'ri / ${questions.length} ta savol · ${passed ? 'Sertifikat uchun bajarildi!' : 'Mavzuni qaytadan o\'qing'}</div>
+    <div class="rh-badges">
+      <span class="rh-badge" style="background:rgba(${passed?'16,185,129':'239,68,68'},.1);color:${passed?'#10b981':'#ef4444'}">${passed?'✅ O\'tdi':'❌ O\'tmadi'}</span>
+      <span class="rh-badge" style="background:rgba(59,130,246,.1);color:#3b82f6">📊 ${pct}% ball</span>
+      ${pct === 100 ? '<span class="rh-badge" style="background:rgba(245,158,11,.1);color:#f59e0b">🏆 Mukammal natija!</span>' : ''}
+    </div>
+    <button onclick="initQuiz()" style="margin-top:8px;padding:12px 28px;background:var(--grad);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer">🔄 Qayta yechish</button>`;
+
+  const container = document.getElementById('quizContainer');
+  container.insertBefore(resultDiv, container.firstChild);
+  document.getElementById('submitBtn').style.display = 'none';
+  resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetQuiz() { initQuiz(); }
+
+/* ════════════════════════════════════════════
+   CODE EDITOR
+════════════════════════════════════════════ */
+const editorFiles = {
+  'main.py': { lang: 'python', code: `# IT Course — Python Editor
+# Kod yozing va ▶ tugmasini bosing!
+
+def salom(ism):
+    """Salomlashish funksiyasi"""
+    return f"Assalom, {ism}! IT Course ga xush kelibsiz! 🚀"
+
+# Funksiyani chaqirish
+print(salom("Akbar"))
+print(salom("Zulfiya"))
+
+# Sonlar bilan ishlash
+a, b = 15, 7
+print(f"\\n{a} + {b} = {a + b}")
+print(f"{a} - {b} = {a - b}")
+print(f"{a} * {b} = {a * b}")
+print(f"{a} / {b} = {a / b:.2f}")
+print(f"{a} // {b} = {a // b}")
+print(f"{a} % {b} = {a % b}")
+
+# List bilan ishlash
+mevalar = ["olma", "nok", "banan", "uzum"]
+for i, meva in enumerate(mevalar, 1):
+    print(f"{i}. {meva}")` },
+  'app.js': { lang: 'javascript', code: `// IT Course — JavaScript Editor
+// Zamonaviy JS (ES2024) misollari
+
+// Arrow functions va template literals
+const greet = (name) => \`Assalom, \${name}! 👋\`;
+console.log(greet("Akbar"));
+
+// Array metodlari (functional approach)
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evens = numbers.filter(n => n % 2 === 0);
+const squares = evens.map(n => n ** 2);
+const total = squares.reduce((acc, n) => acc + n, 0);
+
+console.log("Juft sonlar:", evens);
+console.log("Kvadratlar:", squares);
+console.log("Jami:", total);
+
+// Object destructuring
+const student = { name: "Zulfiya", age: 22, course: "Python" };
+const { name, course } = student;
+console.log(\`\${name} - \${course} kursida\`);
+
+// Async simulation
+const fetchData = async (url) => {
+    console.log(\`\${url} dan ma'lumot yuklanmoqda...\`);
+    return { status: 200, data: "Muvaffaqiyat!" };
+};
+fetchData("https://api.itcourse.uz").then(r => console.log(r.data));` },
+  'index.html': { lang: 'html', code: `<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Course — Mening Sahifam</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a, #1a0f2e);
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 { font-size: 2rem; margin-bottom: 12px;
+             background: linear-gradient(135deg, #3b82f6, #06b6d4);
+             -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p { color: #94a3b8; margin-bottom: 24px; }
+        button {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            border: none; border-radius: 12px;
+            color: white; font-size: 16px; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 IT Course</h1>
+        <p>Dasturlashni o'rganing va kelajakni quring!</p>
+        <button onclick="this.textContent='🎉 Xush kelibsiz!'">Boshlash</button>
+    </div>
+</body>
+</html>` },
+  'style.css': { lang: 'css', code: `/* IT Course — CSS Design System */
+:root {
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --bg: #0f0f1a;
+    --text: #f1f5f9;
+}
+
+/* Premium card component */
+.card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover::before { opacity: 1; }
+
+/* Gradient button */
+.btn-primary {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+}` },
+  'fibonacci.py': { lang: 'python', code: `# Fibonacci ketma-ketligi — turli usullar
+
+# 1. Rekursiv (sekin, katta n uchun)
+def fib_recursive(n):
+    if n <= 1:
+        return n
+    return fib_recursive(n-1) + fib_recursive(n-2)
+
+# 2. Memoization bilan (tez!)
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib_memo(n):
+    if n <= 1:
+        return n
+    return fib_memo(n-1) + fib_memo(n-2)
+
+# 3. Iterativ usul (eng samarali)
+def fib_iter(n):
+    if n <= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+# Natijalar
+print("Fibonacci 15 ta:", [fib_iter(i) for i in range(15)])
+print("Fib(20) =", fib_memo(20))
+print("Fib(50) =", fib_memo(50))
+
+# Fibonacci oltin nisbati
+phi = (1 + 5**0.5) / 2
+print(f"Oltin nisbat φ ≈ {phi:.10f}")` }
+};
+
+const exercises = [
+  { file: 'main.py', code: `# ✅ Mashq 1: "Salom, Dunyo!" chiqaring
+# Topshiriq: Ekranga "Salom, Dunyo! Men Pythonni o'rganmoqdaman" deb yozing.
+
+print("Salom, Dunyo! Men Pythonni o'rganmoqdaman")
+
+# Qo'shimcha: Ismingizni ham kiriting
+ism = "Sizning ismingiz"
+print(f"Salom! Men {ism}man!")`, lang: 'python' },
+  { file: 'main.py', code: `# ⚡ Mashq 2: Kalkulyator funksiyasi
+# Topshiriq: Ikki son ustida 4 xil amal bajaring
+
+def kalkulyator(a, b):
+    """To'liq kalkulyator funksiyasi"""
+    qo_shish = a + b
+    ayirish = a - b
+    kopaytirish = a * b
+    bolish = a / b if b != 0 else "Xato: 0 ga bo'lib bo'lmaydi"
+    
+    print(f"{'='*30}")
+    print(f"  {a} + {b} = {qo_shish}")
+    print(f"  {a} - {b} = {ayirish}")
+    print(f"  {a} × {b} = {kopaytirish}")
+    print(f"  {a} ÷ {b} = {bolish}")
+    print(f"{'='*30}")
+
+kalkulyator(100, 7)
+kalkulyator(3.14, 2)`, lang: 'python' },
+  { file: 'fibonacci.py', code: `# 🔢 Mashq 3: Fibonacci generatori
+# Topshiriq: Sonsiz Fibonacci ketma-ketligi generatori yarating
+
+def fib_generator():
+    """Cheksiz Fibonacci generatori"""
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Generatordan foydalanish
+gen = fib_generator()
+birinchi_20 = [next(gen) for _ in range(20)]
+print("Birinchi 20 ta Fibonacci soni:")
+print(birinchi_20)
+
+# Faqat 100 dan katta va 1000 dan kichik Fibonaccilar
+gen2 = fib_generator()
+maxsus = [next(gen2) for _ in range(30) if True]
+print("\\nFibonacci sonlari:")
+for n in maxsus:
+    if 100 < n < 1000:
+        print(f"  {n}")`, lang: 'python' },
+  { file: 'app.js', code: `// 🔧 Mashq 4: Bubble Sort algoritmi
+// Topshiriq: Bubble sort algoritmini JS da yozing
+
+function bubbleSort(arr) {
+    const n = arr.length;
+    let qadam = 0;
+    
+    for (let i = 0; i < n; i++) {
+        let almashtirish = false;
+        for (let j = 0; j < n - i - 1; j++) {
+            qadam++;
+            if (arr[j] > arr[j + 1]) {
+                // Almashtirish (swap)
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                almashtirish = true;
+            }
+        }
+        if (!almashtirish) break; // Optimallashtirish
+    }
+    
+    console.log(\`Qadam soni: \${qadam}\`);
+    return arr;
+}
+
+const arr = [64, 34, 25, 12, 22, 11, 90, 45];
+console.log("Dastlabki:", arr);
+console.log("Tartiblangan:", bubbleSort([...arr]));
+
+// Vaqt tahlili
+console.time("Bubble Sort");
+bubbleSort(Array.from({length: 1000}, () => Math.random() * 1000 | 0));
+console.timeEnd("Bubble Sort");`, lang: 'javascript' }
+];
+
+let currentEdFile = 'main.py';
+
+function initEditor() {
+  const ta = document.getElementById('codeEditor');
+  if (!ta.value) {
+    ta.value = editorFiles['main.py'].code;
+    document.getElementById('edLang').value = 'python';
+  }
+  syncGutter();
+}
+
+function openFile(name, lang, el) {
+  currentEdFile = name;
+  document.querySelectorAll('.ef-item').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  const f = editorFiles[name];
+  document.getElementById('codeEditor').value = f ? f.code : `# ${name} fayli\n`;
+  document.getElementById('edLang').value = f ? f.lang : lang;
+  syncGutter();
+  clearOut();
+}
+
+function loadEx(i) {
+  const ex = exercises[i];
+  document.getElementById('codeEditor').value = ex.code;
+  document.getElementById('edLang').value = ex.lang;
+  syncGutter();
+  clearOut();
+}
+
+function langChanged() { }
+
+function syncGutter() {
+  const ta = document.getElementById('codeEditor');
+  const lines = ta.value.split('\n').length;
+  document.getElementById('gutter').innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+}
+
+function syncScroll() {
+  const ta = document.getElementById('codeEditor');
+  document.getElementById('gutter').scrollTop = ta.scrollTop;
+}
+
+function edKeyDown(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = document.getElementById('codeEditor');
+    const s = ta.selectionStart;
+    ta.value = ta.value.substring(0, s) + '    ' + ta.value.substring(ta.selectionEnd);
+    ta.selectionStart = ta.selectionEnd = s + 4;
+    syncGutter();
+  }
+}
+
+function formatCode() {
+  showToast('✨ Kod formatlandi!');
+}
+
+async function runCode() {
+  const code = document.getElementById('codeEditor').value;
+  const lang = document.getElementById('edLang').value;
+  const btn = document.getElementById('runBtn');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Ishlamoqda...';
+  document.getElementById('edStatus').textContent = '● Bajarilmoqda';
+  document.getElementById('eoBadge').textContent = '● Bajarilmoqda';
+  document.getElementById('eoBadge').className = 'eo-badge';
+
+  await sleep(500);
+
+  try {
+    let lines = [];
+    if (lang === 'javascript') {
+      const logs = [];
+      const origConsole = { log: console.log, warn: console.warn, error: console.error };
+      console.log = (...a) => logs.push({ type: 'out', text: a.map(x => typeof x === 'object' ? JSON.stringify(x, null, 2) : String(x)).join(' ') });
+      console.warn = (...a) => logs.push({ type: 'warn', text: '⚠️ ' + a.join(' ') });
+      console.error = (...a) => logs.push({ type: 'err', text: '❌ ' + a.join(' ') });
+      try {
+        const fn = new Function(code);
+        fn();
+      } catch(e) {
+        Object.assign(console, origConsole);
+        throw e;
+      }
+      Object.assign(console, origConsole);
+      lines = logs.length ? logs : [{ type: 'info', text: '// Hech narsa chiqarilmadi (console.log() ni ishlating)' }];
+    } else if (lang === 'python') {
+      lines = simulatePython(code);
+    } else if (lang === 'html') {
+      const w = window.open('', '_blank', 'width=700,height=500,menubar=no');
+      if (w) { w.document.write(code); w.document.close(); }
+      lines = [{ type: 'info', text: '✅ HTML yangi oynada ochildi!' }];
+    } else if (lang === 'css') {
+      lines = [{ type: 'info', text: '✅ CSS kodi tekshirildi. HTML bilan birga ishlatish uchun index.html ni oching.' }];
+    }
+
+    document.getElementById('eoBadge').textContent = '● Muvaffaqiyatli';
+    document.getElementById('eoBadge').className = 'eo-badge eo-ok';
+    document.getElementById('edStatus').textContent = '● Tayyor';
+    renderOutput(lines);
+
+  } catch (e) {
+    document.getElementById('eoBadge').textContent = '● Xato';
+    document.getElementById('eoBadge').className = 'eo-badge eo-err';
+    document.getElementById('edStatus').textContent = '● Xato';
+    renderOutput([
+      { type: 'err', text: `❌ ${e.constructor.name}: ${e.message}` },
+      { type: 'warn', text: `📍 ${e.stack ? e.stack.split('\n')[1]?.trim() : 'Xato joyini aniqlash imkonsiz'}` }
+    ]);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 1.5L10 6L2 10.5V1.5Z" fill="currentColor"/></svg> Ishga tushirish';
+}
+
+function simulatePython(code) {
+  const lines = [];
+  // Improved Python simulator
+  const varTable = {};
+
+  // Basic variable assignments
+  const assignRe = /^([a-zA-Z_]\w*)\s*=\s*(.+)$/gm;
+  let m;
+  while ((m = assignRe.exec(code)) !== null) {
+    const name = m[1];
+    const val = m[2].trim();
+    if (/^\d+(\.\d+)?$/.test(val)) varTable[name] = parseFloat(val);
+    else if (/^".*"$/.test(val) || /^'.*'$/.test(val)) varTable[name] = val.slice(1, -1);
+    else if (val === 'True') varTable[name] = true;
+    else if (val === 'False') varTable[name] = false;
+  }
+
+  // Parse print statements
+  const printRe = /print\(([\s\S]*?)\)(?=\s*$|\s*#)/gm;
+  const printed = new Set();
+  while ((m = printRe.exec(code)) !== null) {
+    if (printed.has(m.index)) continue;
+    printed.add(m.index);
+    let arg = m[1].trim();
+    try {
+      // f-string
+      arg = arg.replace(/^f"(.*)"$/, (_, s) => s.replace(/\{([^}]+)\}/g, (__, expr) => {
+        try {
+          // Simple eval of expressions
+          const ex = expr.replace(/([a-zA-Z_]\w*)/g, v => varTable[v] !== undefined ? varTable[v] : v);
+          return Function('return ' + ex)();
+        } catch { return expr; }
+      }));
+      arg = arg.replace(/^f'(.*)'$/, (_, s) => s.replace(/\{([^}]+)\}/g, (__, expr) => {
+        try {
+          const ex = expr.replace(/([a-zA-Z_]\w*)/g, v => varTable[v] !== undefined ? varTable[v] : v);
+          return Function('return ' + ex)();
+        } catch { return expr; }
+      }));
+      // Simple string
+      arg = arg.replace(/^["'](.*)["']$/, '$1');
+      // Variable reference
+      if (varTable[arg] !== undefined) arg = String(varTable[arg]);
+      lines.push({ type: 'out', text: arg });
+    } catch { lines.push({ type: 'out', text: arg }); }
+  }
+
+  // For loops simplified
+  const forRe = /for\s+\w+\s+in\s+range\((\d+)\):\s*\n((?:\s+.*\n?)*)/gm;
+  while ((m = forRe.exec(code)) !== null) {
+    const end = parseInt(m[1]);
+    const body = m[2].trim();
+    if (body.startsWith('print(')) {
+      const nums = Array.from({ length: end }, (_, i) => i);
+      nums.forEach(n => lines.push({ type: 'out', text: String(n) }));
+    }
+  }
+
+  if (!lines.length) {
+    return [{ type: 'info', text: '// Python simulyator: print() chaqiruvlari topilmadi.' },
+            { type: 'info', text: '// Real Python ishlatish uchun replit.com saytiga o\'ting' }];
+  }
+  return lines;
+}
+
+function renderOutput(lines) {
+  const area = document.getElementById('outputArea');
+  area.innerHTML = lines.map(l => {
+    const cls = { out: 'eo-line-out', err: 'eo-line-err', info: 'eo-line-info', warn: 'eo-line-warn' }[l.type] || 'eo-line-out';
+    return `<span class="${cls}">${escHtml(l.text)}</span>`;
+  }).join('');
+}
+
+function clearOut() {
+  document.getElementById('outputArea').innerHTML = '<span class="eo-line-info">$ Terminal tozalandi</span>';
+  document.getElementById('eoBadge').textContent = '● Tayyor';
+  document.getElementById('eoBadge').className = 'eo-badge eo-ok';
+}
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+function showToast(msg) {
+  const existing = document.querySelectorAll('.itc-toast');
+  existing.forEach(t => t.remove());
+  const t = document.createElement('div');
+  t.className = 'itc-toast';
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position: 'fixed', bottom: '24px', left: '50%',
+    transform: 'translateX(-50%) translateY(60px)',
+    padding: '11px 20px',
+    background: 'rgba(13,21,38,.98)',
+    border: '1px solid rgba(59,130,246,.25)',
+    borderRadius: '12px', color: '#f1f5f9', fontSize: '14px',
+    fontFamily: 'Inter,sans-serif', zIndex: '99999',
+    backdropFilter: 'blur(20px)', transition: 'transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s',
+    opacity: '0', whiteSpace: 'nowrap', fontWeight: '600',
+    boxShadow: '0 8px 32px rgba(0,0,0,.3)'
+  });
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.transform = 'translateX(-50%) translateY(0)'; t.style.opacity = '1'; });
+  setTimeout(() => { t.style.transform = 'translateX(-50%) translateY(60px)'; t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, 3000);
+}
+
+/* INIT */
+renderLessons();
+initQuiz();
+</script>
+</body>
+</html>

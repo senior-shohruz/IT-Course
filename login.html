@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kirish — IT Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+:root{
+  --bg:#080e1d;--card:rgba(13,21,38,0.95);
+  --blue:#3b82f6;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--purple:#8b5cf6;
+  --grad:linear-gradient(135deg,#3b82f6,#06b6d4);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:rgba(148,163,184,0.1);--bfocus:rgba(59,130,246,0.4);
+  --font:'Inter',sans-serif;--display:'Outfit',sans-serif;
+  --r:12px;--rl:18px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:rgba(59,130,246,0.25)}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:var(--font);border:none;background:none}
+
+/* BG */
+.auth-bg{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.bg-o{position:absolute;border-radius:50%;filter:blur(90px);animation:of 10s ease-in-out infinite}
+.bo1{width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,0.13),transparent 70%);top:-15%;left:-10%}
+.bo2{width:500px;height:500px;background:radial-gradient(circle,rgba(6,182,212,0.1),transparent 70%);bottom:0;right:-10%;animation-delay:-5s}
+.bo3{width:300px;height:300px;background:radial-gradient(circle,rgba(139,92,246,0.07),transparent 70%);top:40%;left:40%;animation-delay:-8s}
+@keyframes of{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-15px)}}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent)}
+
+/* LAYOUT */
+.layout{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+
+/* LEFT */
+.left{display:flex;flex-direction:column;padding:32px 48px 40px;border-right:1px solid var(--border);position:relative;overflow:hidden;background:rgba(255,255,255,.005)}
+.left::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.04),rgba(6,182,212,.02))}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--text2);font-size:14px;font-weight:500;transition:.2s;width:fit-content;position:relative}
+.back:hover{color:var(--text)}
+.l-content{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:420px;position:relative;padding:40px 0}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:36px}
+.b-icon{width:48px;height:48px;background:var(--grad);border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:18px;font-weight:900;color:#fff}
+.b-name{font-family:var(--display);font-size:24px;font-weight:800;letter-spacing:-.02em}
+.b-name span{color:var(--cyan)}
+.l-title{font-family:var(--display);font-size:clamp(28px,3vw,44px);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:14px}
+.l-grad{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.l-sub{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:28px;max-width:360px}
+
+/* Courses preview */
+.l-courses{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.lc-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r);transition:.2s}
+.lc-item:hover{background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.2)}
+.lc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.lc-info{flex:1}
+.lc-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.lc-meta{font-size:11px;color:var(--text3)}
+.lc-badge{padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700}
+
+/* Admin hint */
+.admin-hint{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:var(--r);padding:14px;margin-bottom:20px;font-size:13px}
+.admin-hint strong{color:var(--yellow);display:block;margin-bottom:6px}
+.admin-hint code{background:rgba(245,158,11,.15);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;color:var(--yellow)}
+
+/* Pills */
+.l-pills{display:flex;flex-wrap:wrap;gap:8px;position:relative}
+.pill{display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:99px;font-size:12px;font-weight:500;color:var(--text2)}
+
+/* RIGHT */
+.right{display:flex;align-items:center;justify-content:center;padding:40px 24px}
+.card{width:100%;max-width:430px;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:36px;box-shadow:0 0 0 1px rgba(255,255,255,.04),0 24px 80px rgba(0,0,0,.4),0 0 60px rgba(59,130,246,.06);backdrop-filter:blur(24px);animation:ci .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes ci{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Tabs */
+.tabs{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:26px;position:relative}
+.tab{flex:1;padding:9px;font-size:14px;font-weight:600;color:var(--text2);border-radius:8px;transition:.25s;position:relative;z-index:1}
+.tab.on{color:var(--text)}
+.tab-sl{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);background:rgba(255,255,255,.08);border-radius:8px;transition:.25s}
+.tab-sl.r{transform:translateX(100%)}
+
+/* Header */
+.ch h2{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.ch p{font-size:14px;color:var(--text2);margin-bottom:22px}
+
+/* Google btn */
+.g-btn{width:100%;padding:0;background:#fff;border:none;border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:.3s;box-shadow:0 2px 12px rgba(0,0,0,.15);position:relative}
+.g-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.g-btn-in{display:flex;align-items:center;padding:13px 16px;gap:12px;position:relative;z-index:1}
+.g-btn-in span{flex:1;font-size:15px;font-weight:600;color:#3c4043;text-align:left}
+.g-arrow{font-size:15px;color:#5f6368;transition:.2s}
+.g-btn:hover .g-arrow{transform:translateX(3px)}
+.g-shine{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transition:left .5s}
+.g-btn:hover .g-shine{left:100%}
+
+/* GitHub btn */
+.gh-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;background:#21262d;border:1px solid #30363d;border-radius:var(--r);color:#e6edf3;font-size:14px;font-weight:600;transition:.3s;margin-bottom:20px}
+.gh-btn:hover{background:#282e35;border-color:#58a6ff;transform:translateY(-1px)}
+
+/* Divider */
+.div{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--text3);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.div::before,.div::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Fields */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.lr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.lr label{margin-bottom:0}
+.fl{font-size:12px;color:var(--blue);font-weight:500;transition:.2s}
+.fl:hover{opacity:.7;text-decoration:underline}
+.iw{position:relative;display:flex;align-items:center}
+.ii{position:absolute;left:13px;color:var(--text3);pointer-events:none;transition:.2s;display:flex}
+.fi{width:100%;padding:11px 40px 11px 40px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:.25s;-webkit-appearance:none}
+.fi::placeholder{color:var(--text3)}
+.fi:focus{border-color:var(--bfocus);background:rgba(59,130,246,.05);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.fi.err{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.04)}
+.fi.ok{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.04)}
+.eye{position:absolute;right:12px;color:var(--text3);display:flex;padding:4px;border-radius:6px;transition:.2s}
+.eye:hover{color:var(--text2);background:rgba(255,255,255,.06)}
+.ferr{display:block;font-size:12px;color:var(--red);margin-top:4px;min-height:16px}
+
+/* Strength */
+.pw-s{margin-top:8px;display:flex;align-items:center;gap:10px}
+.pw-bars{display:flex;gap:4px}
+.pb{width:26px;height:3px;background:var(--border);border-radius:2px;transition:background .3s}
+.pb.weak{background:var(--red)}.pb.fair{background:var(--yellow)}.pb.good{background:var(--blue)}.pb.strong{background:var(--green)}
+.pw-lbl{font-size:11px;color:var(--text3);font-weight:500}
+
+/* Terms */
+.terms{margin-bottom:14px;display:none}
+.cb-lbl{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--text2);line-height:1.5}
+.cb-lbl input{display:none}
+.cm{width:18px;height:18px;min-width:18px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;transition:.2s;margin-top:1px}
+.cb-lbl input:checked~.cm{background:var(--blue);border-color:var(--blue)}
+.cb-lbl input:checked~.cm::after{content:'✓';font-size:11px;color:#fff;font-weight:700}
+.cb-lbl a{color:var(--blue)}
+
+/* Submit */
+.sub-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:var(--grad);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;margin-bottom:16px;transition:.3s;position:relative;overflow:hidden}
+.sub-btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);opacity:0;transition:.2s}
+.sub-btn:hover::before{opacity:1}
+.sub-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(59,130,246,.35)}
+.sub-btn:disabled{opacity:.7;pointer-events:none}
+.spin{animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* Switch */
+.sw{text-align:center;font-size:13px;color:var(--text2);margin-bottom:18px}
+.sw button{color:var(--blue);font-weight:600;font-size:13px;margin-left:4px}
+.sw button:hover{text-decoration:underline}
+
+/* Trust */
+.trust{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.ti{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.td{width:3px;height:3px;background:var(--text3);border-radius:50%}
+
+/* ── GOOGLE POPUP ── */
+.gp-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.25s}
+.gp-ov.on{opacity:1;visibility:visible}
+.gp{background:#fff;border-radius:16px;width:360px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.4);transform:scale(.92) translateY(16px);transition:.3s cubic-bezier(.34,1.56,.64,1)}
+.gp-ov.on .gp{transform:scale(1) translateY(0)}
+.gp-head{padding:22px 22px 14px;border-bottom:1px solid #e8eaed;position:relative}
+.gp-cls{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;color:#5f6368;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.15s;background:none;border:none;cursor:pointer}
+.gp-cls:hover{background:#f1f3f4}
+.gp-logo{display:flex;justify-content:center;margin-bottom:10px}
+.gp-site{text-align:center;font-size:11px;color:#5f6368;font-family:var(--font)}
+.gp-body{padding:18px 22px 14px}
+.gp-body h3{font-size:19px;color:#202124;font-weight:500;margin-bottom:3px;text-align:center;font-family:var(--font)}
+.gp-body>p{font-size:13px;color:#5f6368;text-align:center;margin-bottom:18px;font-family:var(--font)}
+.gp-body>p strong{color:#202124}
+.gp-acc{display:flex;flex-direction:column;gap:2px}
+.gp-a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;cursor:pointer;transition:.15s;border:none;background:none;width:100%;text-align:left;font-family:var(--font)}
+.gp-a:hover{background:#f1f3f4}
+.gp-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.gp-av.add{background:#e8f0fe;color:#1a73e8;font-size:19px;font-weight:400}
+.gp-ai{flex:1}
+.gp-ai strong{display:block;font-size:13px;color:#202124;font-weight:500}
+.gp-ai span{font-size:11px;color:#5f6368}
+.gp-a.add-a .gp-ai strong{color:#1a73e8}
+.gp-foot{padding:10px 22px;border-top:1px solid #e8eaed;display:flex;justify-content:center;gap:16px;font-size:11px;color:#5f6368;font-family:var(--font)}
+.gp-foot a{color:#5f6368}
+.gp-foot a:hover{text-decoration:underline}
+
+/* ── SUCCESS ── */
+.suc-ov{position:fixed;inset:0;background:rgba(8,14,29,.92);backdrop-filter:blur(16px);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.3s}
+.suc-ov.on{opacity:1;visibility:visible}
+.suc-card{text-align:center;padding:48px 40px;background:rgba(13,21,38,.98);border:1px solid rgba(59,130,246,.2);border-radius:22px;max-width:360px;width:90%;box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 60px rgba(59,130,246,.1);animation:scIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes scIn{from{transform:scale(.8) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.suc-ring{display:flex;justify-content:center;margin-bottom:18px;animation:rIn 1s ease both}
+@keyframes rIn{from{transform:scale(0) rotate(-90deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.suc-card h3{font-family:var(--display);font-size:22px;font-weight:800;margin-bottom:8px}
+.suc-card p{font-size:14px;color:var(--text2);margin-bottom:22px;line-height:1.6}
+.suc-prog{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.suc-bar{height:100%;background:var(--grad);border-radius:2px;width:0%;transition:width 2.6s linear}
+
+/* RESPONSIVE */
+@media(max-width:900px){.layout{grid-template-columns:1fr}.left{display:none}.right{min-height:100vh}}
+@media(max-width:480px){.card{padding:28px 22px}}
+  </style>
+</head>
+<body>
+<div class="auth-bg">
+  <div class="bg-o bo1"></div>
+  <div class="bg-o bo2"></div>
+  <div class="bg-o bo3"></div>
+  <div class="bg-grid"></div>
+</div>
+
+<div class="layout">
+  <!-- LEFT -->
+  <div class="left">
+    <a href="index.html" class="back">← Bosh sahifaga</a>
+    <div class="l-content">
+      <div class="brand">
+        <div class="b-icon">IT</div>
+        <div class="b-name">IT<span>Course</span></div>
+      </div>
+      <h1 class="l-title">IT sohasini<br><span class="l-grad">O'zbekcha</span><br>O'rganing</h1>
+      <p class="l-sub">12,400+ talaba bilan birga professional IT bilim oling. Amaliy darslar, testlar va sertifikat.</p>
+
+      <div class="l-courses">
+        <div class="lc-item">
+          <div class="lc-icon" style="background:rgba(251,191,36,0.15)">🐍</div>
+          <div class="lc-info">
+            <div class="lc-name">Python — Noldan Professional</div>
+            <div class="lc-meta">48 dars · 4.2k talaba · Akbar Karimov</div>
+          </div>
+          <div class="lc-badge" style="background:rgba(16,185,129,0.15);color:#10b981">BEPUL</div>
+        </div>
+        <div class="lc-item">
+          <div class="lc-icon" style="background:rgba(59,130,246,0.15)">⚡</div>
+          <div class="lc-info">
+            <div class="lc-name">JavaScript + React To'liq Kurs</div>
+            <div class="lc-meta">42 dars · 3.8k talaba · Zulfiya Azimova</div>
+          </div>
+          <div class="lc-badge" style="background:rgba(59,130,246,0.15);color:#3b82f6">YANGI</div>
+        </div>
+        <div class="lc-item">
+          <div class="lc-icon" style="background:rgba(139,92,246,0.15)">🤖</div>
+          <div class="lc-info">
+            <div class="lc-name">Machine Learning & AI</div>
+            <div class="lc-meta">55 dars · 2.9k talaba · Malika Saidova</div>
+          </div>
+          <div class="lc-badge" style="background:rgba(139,92,246,0.15);color:#8b5cf6">🔥 TOP</div>
+        </div>
+      </div>
+
+      <div class="admin-hint" id="adminHint" style="display:none">
+        <strong>🔐 Admin Login ma'lumotlari:</strong>
+        Email: <code>admin@itcourse.uz</code><br>
+        Parol: <code>Admin@123</code>
+      </div>
+
+      <div class="l-pills">
+        <div class="pill">💻 Online Editor</div>
+        <div class="pill">🧪 Amaliy Testlar</div>
+        <div class="pill">🏆 Sertifikat</div>
+        <div class="pill">🤖 AI Yordamchi</div>
+        <div class="pill">🇺🇿 O'zbek tilida</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="card">
+      <div class="tabs">
+        <button class="tab on" id="tabLogin" onclick="switchTab('login')">Kirish</button>
+        <button class="tab" id="tabAdmin" onclick="switchTab('admin')">Admin</button>
+        <div class="tab-sl" id="tabSl"></div>
+      </div>
+
+      <div class="ch">
+        <h2 id="cTitle">Xush Kelibsiz 👋</h2>
+        <p id="cSub">Hisobingizga kiring va o'rganishni davom ettiring</p>
+      </div>
+
+      <!-- Google -->
+      <button class="g-btn" id="gBtn" onclick="openGoogle()">
+        <div class="g-btn-in">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M19.1 10.22c0-.63-.06-1.24-.17-1.82H10v3.44h5.1c-.22 1.06-.88 1.96-1.88 2.56v2.13h3.04c1.78-1.64 2.81-4.05 2.81-6.31z" fill="#4285F4"/>
+            <path d="M10 19.5c2.56 0 4.71-.85 6.28-2.29l-3.04-2.13c-.85.57-1.94.91-3.24.91-2.49 0-4.6-1.68-5.35-3.94H1.52v2.2C3.08 17.3 6.31 19.5 10 19.5z" fill="#34A853"/>
+            <path d="M4.65 12.05A5.6 5.6 0 0 1 4.35 10c0-.71.12-1.4.3-2.05V5.75H1.52A9.52 9.52 0 0 0 .5 10c0 1.53.37 2.98 1.02 4.25l3.13-2.2z" fill="#FBBC05"/>
+            <path d="M10 4.01c1.4 0 2.66.48 3.65 1.43l2.74-2.74C14.7.97 12.55 0 10 0 6.31 0 3.08 2.2 1.52 5.75l3.13 2.2C5.4 5.69 7.51 4.01 10 4.01z" fill="#EA4335"/>
+          </svg>
+          <span id="gTxt">Google bilan kirish</span>
+          <div class="g-arrow">→</div>
+        </div>
+        <div class="g-shine"></div>
+      </button>
+
+      <!-- GitHub -->
+      <button class="gh-btn" id="ghBtn" onclick="handleGithub()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><path d="M9 0C4 0 0 4 0 9c0 4 2.6 7.4 6.2 8.6.5.1.7-.2.7-.4v-1.6c-2.5.5-3-.6-3.2-1.1-.1-.3-.6-1.1-1-1.3-.3-.2-.8-.6 0-.6.8 0 1.3.7 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.4-1.1.7-1.3-2-.2-4.1-1-4.1-4.4 0-1 .3-1.8.9-2.4-.1-.2-.4-1.1.1-2.3 0 0 .7-.2 2.4.9.7-.2 1.4-.3 2.1-.3s1.4.1 2.1.3c1.7-1.1 2.4-.9 2.4-.9.5 1.2.2 2.1.1 2.3.6.6.9 1.4.9 2.4 0 3.4-2.1 4.2-4.1 4.4.3.3.6.8.6 1.6v2.4c0 .2.2.5.7.4C15.4 16.4 18 13 18 9c0-5-4-9-9-9z"/></svg>
+        <span id="ghTxt">GitHub bilan kirish</span>
+      </button>
+
+      <div class="div"><span>yoki email orqali</span></div>
+
+      <form id="authForm" onsubmit="handleSubmit(event)" novalidate>
+        <!-- Name (signup) -->
+        <div class="fg" id="nameF" style="display:none">
+          <label>To'liq ism</label>
+          <div class="iw">
+            <span class="ii"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+            <input id="nameI" type="text" class="fi" placeholder="Ism Familiya" autocomplete="name"/>
+          </div>
+          <span class="ferr" id="nameE"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="fg">
+          <label>Email manzil</label>
+          <div class="iw">
+            <span class="ii"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 5l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+            <input id="emailI" type="email" class="fi" placeholder="siz@email.com" autocomplete="email" required/>
+          </div>
+          <span class="ferr" id="emailE"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="fg">
+          <div class="lr" id="pwLabel">
+            <label>Parol</label>
+            <a href="#" class="fl" id="forgotL">Parolni unutdim?</a>
+          </div>
+          <div class="iw">
+            <span class="ii"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+            <input id="pwI" type="password" class="fi" placeholder="••••••••" autocomplete="current-password" required/>
+            <button type="button" class="eye" onclick="togglePw()" id="eyeBtn">
+              <svg id="eyeI" width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5S1 8 1 8z" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/></svg>
+            </button>
+          </div>
+          <span class="ferr" id="pwE"></span>
+          <div class="pw-s" id="pwStr" style="display:none">
+            <div class="pw-bars"><div class="pb" id="b1"></div><div class="pb" id="b2"></div><div class="pb" id="b3"></div><div class="pb" id="b4"></div></div>
+            <span class="pw-lbl" id="pwLbl">Parol kiriting</span>
+          </div>
+        </div>
+
+        <!-- Confirm (signup) -->
+        <div class="fg" id="confF" style="display:none">
+          <label>Parolni tasdiqlang</label>
+          <div class="iw">
+            <span class="ii"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <input id="confI" type="password" class="fi" placeholder="••••••••" autocomplete="new-password"/>
+          </div>
+          <span class="ferr" id="confE"></span>
+        </div>
+
+        <!-- Terms -->
+        <div class="terms" id="termsF">
+          <label class="cb-lbl">
+            <input type="checkbox" id="termsC"/>
+            <span class="cm"></span>
+            <span><a href="#">Foydalanish shartlari</a> va <a href="#">Maxfiylik siyosati</a>ga roziman</span>
+          </label>
+        </div>
+
+        <button type="submit" class="sub-btn" id="subBtn">
+          <span id="subTxt">Kirish</span>
+          <svg id="subSpin" width="17" height="17" viewBox="0 0 17 17" fill="none" style="display:none" class="spin"><circle cx="8.5" cy="8.5" r="6.5" stroke="rgba(255,255,255,.3)" stroke-width="2"/><path d="M8.5 2a6.5 6.5 0 0 1 6.5 6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg id="subArrow" width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M3 8.5H14M9 3.5L14 8.5L9 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+
+      <div class="sw"><span id="swTxt">Hisobingiz yo'qmi?</span><button onclick="switchMode()">Bepul ro'yxatdan o'ting</button></div>
+
+      <div class="trust">
+        <div class="ti">⭐ 4.9/5 reyting</div>
+        <div class="td"></div>
+        <div class="ti">🔒 SSL himoya</div>
+        <div class="td"></div>
+        <div class="ti">✅ Spam yo'q</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GOOGLE POPUP -->
+<div class="gp-ov" id="gpOv">
+  <div class="gp">
+    <div class="gp-head">
+      <button class="gp-cls" onclick="closeGoogle()">✕</button>
+      <div class="gp-logo">
+        <svg width="66" height="22" viewBox="0 0 272 92" fill="none">
+          <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18S71.25 59.95 71.25 47.18c0-12.86 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#EA4335"/><path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.86 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z" fill="#FBBC05"/><path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z" fill="#4285F4"/><path d="M225 3v65h-9.5V3h9.5z" fill="#34A853"/><path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z" fill="#EA4335"/><path d="M35.29 41.41V32h31.96c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 35.37.36 16.85 16.32 1.39 35.55 1.39c10.68 0 18.31 4.19 24.02 9.66l-6.75 6.75c-4.11-3.86-9.66-6.84-17.22-6.84-14.07 0-25.08 11.34-25.08 25.41s11.01 25.41 25.08 25.41c9.12 0 14.32-3.61 17.65-6.95 2.69-2.69 4.46-6.53 5.16-11.75H35.29z" fill="#4285F4"/>
+        </svg>
+      </div>
+      <div class="gp-site">accounts.google.com</div>
+    </div>
+    <div class="gp-body">
+      <h3>Akkaunt tanlang</h3>
+      <p><strong>ITCourse</strong> ga kirish uchun</p>
+      <div class="gp-acc">
+        <button class="gp-a" onclick="selectGoogle('Akbar Karimov','akbar@gmail.com')">
+          <div class="gp-av" style="background:linear-gradient(135deg,#4285F4,#34A853)">AK</div>
+          <div class="gp-ai"><strong>Akbar Karimov</strong><span>akbar@gmail.com</span></div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 7H10M7 4L10 7L7 10" stroke="#5f6368" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+        <button class="gp-a" onclick="selectGoogle('Zulfiya Azimova','zulfiya@gmail.com')">
+          <div class="gp-av" style="background:linear-gradient(135deg,#EA4335,#FBBC05)">ZA</div>
+          <div class="gp-ai"><strong>Zulfiya Azimova</strong><span>zulfiya@gmail.com</span></div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 7H10M7 4L10 7L7 10" stroke="#5f6368" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+        <button class="gp-a add-a" onclick="selectGoogle('Yangi Foydalanuvchi','yangi@gmail.com')">
+          <div class="gp-av add">+</div>
+          <div class="gp-ai"><strong>Boshqa akkaunt ishlatish</strong></div>
+        </button>
+      </div>
+    </div>
+    <div class="gp-foot"><a href="#">Maxfiylik</a><span>·</span><a href="#">Shartlar</a></div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="suc-ov" id="sucOv">
+  <div class="suc-card">
+    <div class="suc-ring">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+        <circle cx="30" cy="30" r="26" stroke="url(#sg)" stroke-width="2.5"/>
+        <path d="M18 30l8 8 16-16" stroke="url(#sg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="sg" x1="4" y1="4" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>
+      </svg>
+    </div>
+    <h3 id="sucT">Xush kelibsiz!</h3>
+    <p id="sucM">Muvaffaqiyatli kirdingiz. Dashboard ga yo'naltirilmoqda...</p>
+    <div class="suc-prog"><div class="suc-bar" id="sucBar"></div></div>
+  </div>
+</div>
+
+<script>
+let mode='login',tab='login',pwVis=false,submitting=false;
+
+function switchTab(t){
+  tab=t;
+  document.getElementById('tabLogin').classList.toggle('on',t==='login');
+  document.getElementById('tabAdmin').classList.toggle('on',t==='admin');
+  document.getElementById('tabSl').classList.toggle('r',t==='admin');
+  document.getElementById('adminHint').style.display=t==='admin'?'block':'none';
+  const isAdmin=t==='admin';
+  document.getElementById('cTitle').textContent=isAdmin?'Admin Panel 🔐':'Xush Kelibsiz 👋';
+  document.getElementById('cSub').textContent=isAdmin?'Admin hisobingizga kiring':'Hisobingizga kiring va o\'rganishni davom ettiring';
+  if(isAdmin){
+    document.getElementById('emailI').value='admin@itcourse.uz';
+    document.getElementById('pwI').value='Admin@123';
+    document.getElementById('nameF').style.display='none';
+    document.getElementById('confF').style.display='none';
+    document.getElementById('termsF').style.display='none';
+    document.getElementById('pwStr').style.display='none';
+    document.getElementById('gBtn').style.display='none';
+    document.getElementById('ghBtn').style.display='none';
+    document.querySelector('.div').style.display='none';
+    document.getElementById('subTxt').textContent='Admin bo\'lib kirish';
+    document.getElementById('swTxt').textContent='Talabamisiz?';
+    document.querySelector('.sw button').textContent='Talaba sifatida kirish';
+    document.getElementById('forgotL').style.display='none';
+    mode='login';
+  } else {
+    document.getElementById('emailI').value='';
+    document.getElementById('pwI').value='';
+    document.getElementById('gBtn').style.display='';
+    document.getElementById('ghBtn').style.display='';
+    document.querySelector('.div').style.display='';
+    document.getElementById('forgotL').style.display='';
+    switchMode('login');
+  }
+  clearErrors();
+}
+
+function switchMode(m){
+  if(m)mode=m; else mode=mode==='login'?'signup':'login';
+  const isLogin=mode==='login';
+  document.getElementById('cTitle').textContent=isLogin?'Xush Kelibsiz 👋':'Hisob yaratish 🚀';
+  document.getElementById('cSub').textContent=isLogin?'Hisobingizga kiring':'Bepul ro\'yxatdan o\'ting — karta shart emas';
+  document.getElementById('subTxt').textContent=isLogin?'Kirish':'Hisob yaratish';
+  document.getElementById('swTxt').textContent=isLogin?'Hisobingiz yo\'qmi?':'Hisobingiz bormi?';
+  document.querySelector('.sw button').textContent=isLogin?'Bepul ro\'yxatdan o\'ting':'Kirishga o\'tish';
+  document.getElementById('gTxt').textContent=isLogin?'Google bilan kirish':'Google bilan ro\'yxatdan o\'ting';
+  document.getElementById('ghTxt').textContent=isLogin?'GitHub bilan kirish':'GitHub bilan ro\'yxatdan o\'ting';
+  document.getElementById('nameF').style.display=isLogin?'none':'';
+  document.getElementById('confF').style.display=isLogin?'none':'';
+  document.getElementById('termsF').style.display=isLogin?'none':'block';
+  document.getElementById('pwStr').style.display=isLogin?'none':'';
+  document.getElementById('forgotL').style.display=isLogin?'':'none';
+  clearErrors();
+}
+
+function togglePw(){
+  pwVis=!pwVis;
+  document.getElementById('pwI').type=pwVis?'text':'password';
+  document.getElementById('eyeI').innerHTML=pwVis
+    ?'<path d="M2 8s2-5 6-5 6 5 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M2 8s2 5 6 5 6-5 6-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'
+    :'<path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5S1 8 1 8z" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/>';
+}
+
+// Password strength
+document.getElementById('pwI').addEventListener('input',()=>{
+  if(mode!=='signup')return;
+  const v=document.getElementById('pwI').value;
+  const bars=['b1','b2','b3','b4'].map(id=>document.getElementById(id));
+  bars.forEach(b=>{b.className='pb'});
+  if(!v){document.getElementById('pwLbl').textContent='Parol kiriting';return}
+  let s=0;
+  if(v.length>=8)s++;if(v.length>=12)s++;
+  if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;
+  if(/[0-9]/.test(v))s++;
+  if(/[^A-Za-z0-9]/.test(v))s++;
+  s=Math.min(4,s);
+  const lvls=[{c:'weak',t:'Juda zaif',col:'#ef4444'},{c:'fair',t:'O\'rtacha',col:'#f59e0b'},{c:'good',t:'Yaxshi',col:'#3b82f6'},{c:'strong',t:'Kuchli ✓',col:'#10b981'}];
+  const lv=lvls[s-1]||lvls[0];
+  for(let i=0;i<s;i++)bars[i].classList.add(lv.c);
+  document.getElementById('pwLbl').textContent=lv.t;
+  document.getElementById('pwLbl').style.color=lv.col;
+});
+
+function validateAll(){
+  let ok=true;
+  const email=document.getElementById('emailI').value.trim();
+  const pw=document.getElementById('pwI').value;
+  // email
+  if(!email){showErr('emailI','emailE','Email kiriting');ok=false;}
+  else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('emailI','emailE','Email noto\'g\'ri');ok=false;}
+  else clearErr('emailI','emailE');
+  // password
+  if(!pw){showErr('pwI','pwE','Parol kiriting');ok=false;}
+  else if(mode==='signup'&&pw.length<8){showErr('pwI','pwE','Parol kamida 8 ta belgi');ok=false;}
+  else clearErr('pwI','pwE');
+  // name (signup)
+  if(mode==='signup'){
+    const name=document.getElementById('nameI').value.trim();
+    if(!name){showErr('nameI','nameE','Ismingizni kiriting');ok=false;}
+    else clearErr('nameI','nameE');
+    // confirm
+    const conf=document.getElementById('confI').value;
+    if(!conf){showErr('confI','confE','Parolni tasdiqlang');ok=false;}
+    else if(conf!==pw){showErr('confI','confE','Parollar mos emas');ok=false;}
+    else clearErr('confI','confE');
+    // terms
+    if(!document.getElementById('termsC').checked){showToast('Foydalanish shartlariga rozilasholing','err');ok=false;}
+  }
+  return ok;
+}
+
+function showErr(inputId,errId,msg){
+  const el=document.getElementById(inputId);
+  el.classList.add('err');el.classList.remove('ok');
+  document.getElementById(errId).textContent=msg;
+  el.style.animation='shake .4s ease';setTimeout(()=>el.style.animation='',400);
+}
+function clearErr(inputId,errId){
+  document.getElementById(inputId).classList.remove('err');
+  document.getElementById(inputId).classList.add('ok');
+  document.getElementById(errId).textContent='';
+}
+function clearErrors(){
+  document.querySelectorAll('.fi').forEach(i=>{i.classList.remove('err','ok')});
+  document.querySelectorAll('.ferr').forEach(e=>e.textContent='');
+}
+
+async function handleSubmit(e){
+  e.preventDefault();
+  if(submitting)return;
+  if(!validateAll())return;
+
+  const email=document.getElementById('emailI').value.trim();
+  const pw=document.getElementById('pwI').value;
+  const isAdmin=tab==='admin'||(email==='admin@itcourse.uz'&&pw==='Admin@123');
+
+  setLoad(true);
+  await delay(1600);
+  setLoad(false);
+
+  const name=mode==='signup'?document.getElementById('nameI').value:email.split('@')[0];
+
+  // Save user info
+  localStorage.setItem('itcUser',JSON.stringify({name,email,isAdmin,photo:''}));
+
+  showSuccess(name, isAdmin);
+}
+
+function setLoad(on){
+  submitting=on;
+  document.getElementById('subBtn').disabled=on;
+  document.getElementById('subSpin').style.display=on?'block':'none';
+  document.getElementById('subArrow').style.display=on?'none':'block';
+  document.getElementById('subTxt').textContent=on?(tab==='admin'?'Tekshirilmoqda...':mode==='login'?'Kirilmoqda...':'Yaratilmoqda...'):(tab==='admin'?'Admin bo\'lib kirish':mode==='login'?'Kirish':'Hisob yaratish');
+}
+
+// Google
+function openGoogle(){document.getElementById('gpOv').classList.add('on');document.body.style.overflow='hidden'}
+function closeGoogle(){document.getElementById('gpOv').classList.remove('on');document.body.style.overflow=''}
+async function selectGoogle(name,email){
+  closeGoogle();
+  document.getElementById('gTxt').textContent='Kirilmoqda...';
+  document.getElementById('gBtn').disabled=true;
+  await delay(1200);
+  document.getElementById('gBtn').disabled=false;
+  document.getElementById('gTxt').textContent=mode==='login'?'Google bilan kirish':'Google bilan ro\'yxatdan o\'ting';
+  localStorage.setItem('itcUser',JSON.stringify({name,email,isAdmin:false,photo:''}));
+  showSuccess(name, false);
+}
+
+// GitHub
+async function handleGithub(){
+  document.getElementById('ghBtn').disabled=true;
+  document.getElementById('ghTxt').textContent='GitHub bilan bog\'lanmoqda...';
+  await delay(1500);
+  document.getElementById('ghBtn').disabled=false;
+  document.getElementById('ghTxt').textContent='GitHub bilan kirish';
+  localStorage.setItem('itcUser',JSON.stringify({name:'GitHub User',email:'user@github.com',isAdmin:false,photo:''}));
+  showSuccess('GitHub User', false);
+}
+
+function showSuccess(name, isAdmin){
+  const ov=document.getElementById('sucOv');
+  document.getElementById('sucT').textContent=isAdmin?'Admin paneliga xush kelibsiz! 🔐':`Xush kelibsiz, ${name}! 👋`;
+  document.getElementById('sucM').textContent=isAdmin?'Admin dashboard ga yo\'naltirilmoqda...':'Dashboard ga yo\'naltirilmoqda...';
+  ov.classList.add('on');
+  setTimeout(()=>{document.getElementById('sucBar').style.width='100%'},100);
+  setTimeout(()=>{
+    ov.classList.remove('on');
+    window.location.href=isAdmin?'admin.html':'dashboard.html';
+  },2800);
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+function showToast(msg,type='info'){
+  document.querySelectorAll('.it-toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className='it-toast';
+  t.textContent=msg;
+  const c={info:'rgba(59,130,246,.15)',err:'rgba(239,68,68,.15)'}[type]||'rgba(59,130,246,.15)';
+  const b={info:'rgba(59,130,246,.3)',err:'rgba(239,68,68,.3)'}[type]||'rgba(59,130,246,.3)';
+  Object.assign(t.style,{position:'fixed',bottom:'24px',left:'50%',transform:'translateX(-50%) translateY(60px)',padding:'12px 20px',background:c,border:`1px solid ${b}`,borderRadius:'10px',color:'#f1f5f9',fontSize:'14px',fontFamily:'Inter,sans-serif',zIndex:'99999',backdropFilter:'blur(12px)',transition:'transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s',opacity:'0',whiteSpace:'nowrap'});
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{t.style.transform='translateX(-50%) translateY(0)';t.style.opacity='1'});
+  setTimeout(()=>{t.style.transform='translateX(-50%) translateY(60px)';t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000);
+}
+
+document.getElementById('gpOv').addEventListener('click',e=>{if(e.target===document.getElementById('gpOv'))closeGoogle()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGoogle()});
+
+// Check URL
+const up=new URLSearchParams(window.location.search);
+if(up.get('mode')==='signup')switchMode('signup');
+setTimeout(()=>document.getElementById('emailI').focus(),400);
+</script>
+</body>
+</html>

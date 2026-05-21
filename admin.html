@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — IT Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+:root{
+  --bg:#080e1d;--bg2:#0d1526;--sidebar:#06090f;
+  --card:rgba(13,21,38,0.9);--card2:rgba(255,255,255,0.03);
+  --blue:#3b82f6;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;
+  --yellow:#f59e0b;--purple:#8b5cf6;--orange:#f97316;
+  --grad:linear-gradient(135deg,#3b82f6,#06b6d4);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --border:rgba(148,163,184,0.1);--bblue:rgba(59,130,246,0.2);
+  --font:'Inter',sans-serif;--display:'Outfit',sans-serif;
+  --r:10px;--rl:16px;
+  --nav-h:64px;--sb-w:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+::selection{background:rgba(59,130,246,.25)}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:var(--font);border:none;background:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+
+/* ── TOP NAV ── */
+.topnav{height:var(--nav-h);background:rgba(6,9,15,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:50}
+.tn-logo{display:flex;align-items:center;gap:10px;width:var(--sb-w);flex-shrink:0}
+.tn-icon{width:34px;height:34px;background:var(--grad);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:14px;font-weight:900;color:#fff}
+.tn-name{font-family:var(--display);font-size:18px;font-weight:800}
+.tn-name span{color:var(--cyan)}
+.admin-badge{padding:4px 10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.25);border-radius:99px;font-size:11px;font-weight:700;color:var(--red);margin-left:6px}
+.tn-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tn-user{display:flex;align-items:center;gap:10px;padding:6px 12px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer}
+.tn-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.tn-uname{font-size:13px;font-weight:600}
+.tn-logout{font-size:12px;color:var(--text3);padding:6px 12px;border-radius:8px;transition:.2s;display:flex;align-items:center;gap:5px}
+.tn-logout:hover{color:var(--red);background:rgba(239,68,68,.06)}
+
+/* ── LAYOUT ── */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sb-w);background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:8px}
+.sb-sec{padding:14px 8px 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);margin-bottom:1px;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:.2s}
+.sb-item:hover{color:var(--text);background:var(--card2)}
+.sb-item.on{color:var(--blue);background:rgba(59,130,246,.1);font-weight:600}
+.sb-item .ic{font-size:16px;width:20px}
+.sb-count{margin-left:auto;background:rgba(239,68,68,.2);color:var(--red);border-radius:99px;font-size:10px;font-weight:700;padding:2px 7px}
+.sb-count.green{background:rgba(16,185,129,.2);color:var(--green)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto}
+.page{display:none;padding:24px}
+.page.on{display:block}
+.page-title{font-family:var(--display);font-size:24px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:12px}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rl);padding:20px;position:relative;overflow:hidden;transition:.3s}
+.stat-card:hover{transform:translateY(-3px);border-color:var(--bblue)}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;filter:blur(30px);opacity:.4}
+.sc-blue::before{background:var(--blue)}
+.sc-green::before{background:var(--green)}
+.sc-yellow::before{background:var(--yellow)}
+.sc-purple::before{background:var(--purple)}
+.sc-icon{font-size:28px;margin-bottom:12px}
+.sc-val{font-family:var(--display);font-size:32px;font-weight:900;line-height:1;margin-bottom:6px}
+.sc-lbl{font-size:13px;color:var(--text2);margin-bottom:8px}
+.sc-trend{font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
+.sc-trend.up{color:var(--green)}
+.sc-trend.dn{color:var(--red)}
+
+/* ── TABLES ── */
+.section-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.sc-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sc-head h3{font-family:var(--display);font-size:16px;font-weight:700}
+.sc-actions{display:flex;align-items:center;gap:8px}
+.search-inp{padding:7px 30px 7px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:.2s;width:180px}
+.search-inp:focus{border-color:var(--bblue)}
+.search-inp::placeholder{color:var(--text3)}
+.btn-add{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--grad);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.3s;font-family:var(--font)}
+.btn-add:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,130,246,.3)}
+table{width:100%;border-collapse:collapse}
+th{padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left;background:rgba(0,0,0,.2)}
+td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-user{display:flex;align-items:center;gap:10px}
+.user-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-weight:600;font-size:13px}
+.user-email{font-size:11px;color:var(--text3)}
+.status-badge{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+.sb-active{background:rgba(16,185,129,.15);color:var(--green)}
+.sb-trial{background:rgba(245,158,11,.15);color:var(--yellow)}
+.sb-free{background:rgba(148,163,184,.1);color:var(--text2)}
+.sb-admin{background:rgba(239,68,68,.15);color:var(--red)}
+.td-actions{display:flex;align-items:center;gap:6px}
+.act-btn{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;transition:.2s;cursor:pointer;font-family:var(--font);border:1px solid transparent}
+.ab-edit{background:rgba(59,130,246,.1);color:var(--blue);border-color:rgba(59,130,246,.2)}
+.ab-edit:hover{background:rgba(59,130,246,.2)}
+.ab-del{background:rgba(239,68,68,.08);color:var(--red);border-color:rgba(239,68,68,.15)}
+.ab-del:hover{background:rgba(239,68,68,.15)}
+.ab-view{background:rgba(16,185,129,.08);color:var(--green);border-color:rgba(16,185,129,.15)}
+.ab-view:hover{background:rgba(16,185,129,.15)}
+
+/* Course cards in admin */
+.courses-admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:20px}
+.cag-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;transition:.25s}
+.cag-card:hover{border-color:var(--bblue);transform:translateY(-2px)}
+.cag-thumb{height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative}
+.cag-body{padding:16px}
+.cag-title{font-family:var(--display);font-size:15px;font-weight:700;margin-bottom:6px}
+.cag-meta{font-size:12px;color:var(--text3);margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap}
+.cag-stats{display:flex;gap:12px;margin-bottom:12px}
+.cag-s{text-align:center}
+.cag-sv{font-size:16px;font-weight:800;font-family:var(--display)}
+.cag-sl{font-size:10px;color:var(--text3)}
+.cag-actions{display:flex;gap:6px}
+
+/* ── SETTINGS ── */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.setting-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rl);padding:24px}
+.setting-title{font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.setting-row:last-child{border-bottom:none}
+.sr-left h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.sr-left p{font-size:12px;color:var(--text2)}
+.toggle{width:42px;height:24px;background:rgba(255,255,255,.1);border-radius:12px;position:relative;cursor:pointer;transition:.25s;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.toggle.on::after{transform:translateX(18px)}
+.set-input{padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:.2s;width:100%}
+.set-input:focus{border-color:var(--bblue)}
+.set-save{padding:10px 20px;background:var(--grad);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.3s;font-family:var(--font);margin-top:12px}
+.set-save:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,130,246,.3)}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.25s}
+.modal-ov.on{opacity:1;visibility:visible}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:22px;width:480px;max-width:90vw;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.5);animation:mIn .3s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes mIn{from{transform:scale(.92) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-head{padding:22px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-family:var(--display);font-size:18px;font-weight:800}
+.modal-cls{width:30px;height:30px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;color:var(--text2);transition:.2s;font-size:16px}
+.modal-cls:hover{background:rgba(239,68,68,.1);color:var(--red)}
+.modal-body{padding:22px 24px}
+.mf-group{margin-bottom:16px}
+.mf-group label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:7px}
+.mf-input,.mf-select,.mf-textarea{width:100%;padding:11px 13px;background:rgba(255,255,255,.04);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:14px;font-family:var(--font);outline:none;transition:.2s}
+.mf-textarea{resize:vertical;min-height:80px}
+.mf-select option{background:#0d1526}
+.mf-input:focus,.mf-select:focus,.mf-textarea:focus{border-color:var(--bblue);background:rgba(59,130,246,.04)}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.btn-cancel{padding:9px 18px;background:var(--card2);border:1px solid var(--border);color:var(--text2);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;font-family:var(--font)}
+.btn-cancel:hover{color:var(--text)}
+.btn-save{padding:9px 22px;background:var(--grad);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.3s;font-family:var(--font)}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,130,246,.3)}
+
+/* TOAST */
+.toast-ct{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:99999}
+.toast{padding:12px 18px;background:rgba(13,21,38,.98);border:1px solid rgba(59,130,246,.25);border-radius:12px;color:var(--text);font-size:14px;font-weight:500;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,.3);animation:tIn .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes tIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+  </style>
+</head>
+<body>
+
+<!-- TOPNAV -->
+<div class="topnav">
+  <div class="tn-logo">
+    <div class="tn-icon">IT</div>
+    <div class="tn-name">IT<span>Course</span></div>
+    <div class="admin-badge">🔐 ADMIN</div>
+  </div>
+  <div style="flex:1;max-width:380px;position:relative;margin:0 16px">
+    <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#475569" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <input type="text" placeholder="Qidirish..." style="width:100%;padding:9px 14px 9px 36px;background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.1);border-radius:10px;color:#f1f5f9;font-size:13px;font-family:var(--font);outline:none" oninput="filterTable(this.value)"/>
+  </div>
+  <div class="tn-right">
+    <div class="tn-user">
+      <div class="tn-av">A</div>
+      <span class="tn-uname">Admin</span>
+    </div>
+    <button class="tn-logout" onclick="logout()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 7H12M9 4L12 7L9 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 2H3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Chiqish
+    </button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-sec">Asosiy</div>
+    <div class="sb-item on" onclick="showPage('dashboard')"><div class="ic">📊</div>Dashboard</div>
+    <div class="sb-item" onclick="showPage('users')"><div class="ic">👥</div>Foydalanuvchilar<span class="sb-count">247</span></div>
+    <div class="sb-item" onclick="showPage('courses')"><div class="ic">📚</div>Kurslar<span class="sb-count green">48</span></div>
+    <div class="sb-item" onclick="showPage('lessons')"><div class="ic">🎥</div>Darslar</div>
+    <div class="sb-item" onclick="showPage('tests')"><div class="ic">🧪</div>Testlar</div>
+
+    <div class="sb-sec">Analitika</div>
+    <div class="sb-item" onclick="showPage('analytics')"><div class="ic">📈</div>Hisobotlar</div>
+    <div class="sb-item" onclick="showPage('payments')"><div class="ic">💳</div>To'lovlar</div>
+
+    <div class="sb-sec">Sozlamalar</div>
+    <div class="sb-item" onclick="showPage('settings')"><div class="ic">⚙️</div>Sozlamalar</div>
+    <div class="sb-item" onclick="window.location.href='dashboard.html'"><div class="ic">👤</div>Talaba ko'rinishi</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page on" id="page-dashboard">
+      <div class="page-title">📊 Admin Dashboard
+        <span style="font-size:13px;font-weight:400;color:#94a3b8;font-family:var(--font)">· Oxirgi yangilanish: bugun 19:33</span>
+      </div>
+      <div class="page-sub">IT Course platformasi umumiy ko'rinishi</div>
+
+      <div class="stats-row">
+        <div class="stat-card sc-blue">
+          <div class="sc-icon">👥</div>
+          <div class="sc-val" style="color:var(--blue)">12,847</div>
+          <div class="sc-lbl">Jami foydalanuvchilar</div>
+          <div class="sc-trend up">↑ +247 bu hafta</div>
+        </div>
+        <div class="stat-card sc-green">
+          <div class="sc-icon">📚</div>
+          <div class="sc-val" style="color:var(--green)">48</div>
+          <div class="sc-lbl">Faol kurslar</div>
+          <div class="sc-trend up">↑ +3 bu oy</div>
+        </div>
+        <div class="stat-card sc-yellow">
+          <div class="sc-icon">💰</div>
+          <div class="sc-val" style="color:var(--yellow)">42.8M</div>
+          <div class="sc-lbl">Daromad (so'm)</div>
+          <div class="sc-trend up">↑ +18% o'sish</div>
+        </div>
+        <div class="stat-card sc-purple">
+          <div class="sc-icon">🎓</div>
+          <div class="sc-val" style="color:var(--purple)">3,241</div>
+          <div class="sc-lbl">Sertifikat berilgan</div>
+          <div class="sc-trend up">↑ +89 bu hafta</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px">
+        <div class="section-card">
+          <div class="sc-head"><h3>📈 Oylik o'sish</h3></div>
+          <div style="padding:20px">
+            <div style="display:flex;align-items:flex-end;gap:10px;height:120px">
+              ${['1.2k','2.1k','1.8k','3.4k','2.9k','4.2k','5.1k','4.8k','6.3k','7.1k','8.4k','12.8k'].map((v,i)=>{
+                const h=[15,26,22,42,36,52,64,60,78,88,100,100];
+                return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+                  <div style="width:100%;background:linear-gradient(180deg,#3b82f6,#06b6d4);border-radius:4px 4px 0 0;height:${h[i]}%"></div>
+                  <div style="font-size:9px;color:#475569">${['Y','F','M','A','M','I','Iy','A','S','O','N','D'][i]}</div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="sc-head"><h3>📊 Kurs taqsimoti</h3></div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Python</span><span style="color:#3b82f6">38%</span></div>
+              <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px"><div style="width:38%;height:100%;background:var(--blue);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>JavaScript</span><span style="color:#06b6d4">24%</span></div>
+              <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px"><div style="width:24%;height:100%;background:var(--cyan);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Web Dev</span><span style="color:#10b981">18%</span></div>
+              <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px"><div style="width:18%;height:100%;background:var(--green);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>AI & ML</span><span style="color:#8b5cf6">12%</span></div>
+              <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px"><div style="width:12%;height:100%;background:var(--purple);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Boshqalar</span><span style="color:#475569">8%</span></div>
+              <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px"><div style="width:8%;height:100%;background:#475569;border-radius:3px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent users -->
+      <div class="section-card">
+        <div class="sc-head">
+          <h3>🆕 Yangi foydalanuvchilar</h3>
+          <button class="btn-add" onclick="showPage('users')">Barchasini ko'rish →</button>
+        </div>
+        <table>
+          <thead><tr><th>Foydalanuvchi</th><th>Kurs</th><th>Holat</th><th>Qo'shilgan</th></tr></thead>
+          <tbody id="recentUsersTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== USERS PAGE ===== -->
+    <div class="page" id="page-users">
+      <div class="page-title">👥 Foydalanuvchilar</div>
+      <div class="page-sub">Barcha ro'yxatdan o'tgan foydalanuvchilar</div>
+      <div class="section-card">
+        <div class="sc-head">
+          <h3>Foydalanuvchilar ro'yxati (<span id="userCount">0</span>)</h3>
+          <div class="sc-actions">
+            <input class="search-inp" placeholder="🔍 Qidirish..." oninput="filterTable(this.value)"/>
+            <button class="btn-add" onclick="openModal('addUser')">+ Qo'shish</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Foydalanuvchi</th><th>Kurs</th><th>Holat</th><th>Ball</th><th>Qo'shilgan</th><th>Amal</th></tr></thead>
+          <tbody id="usersTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== COURSES PAGE ===== -->
+    <div class="page" id="page-courses">
+      <div class="page-title">📚 Kurslar</div>
+      <div class="page-sub">Barcha kurslarni boshqarish</div>
+      <div class="section-card">
+        <div class="sc-head">
+          <h3>Kurslar ro'yxati</h3>
+          <button class="btn-add" onclick="openModal('addCourse')">+ Yangi Kurs</button>
+        </div>
+        <div class="courses-admin-grid" id="coursesAdmin"></div>
+      </div>
+    </div>
+
+    <!-- ===== LESSONS PAGE ===== -->
+    <div class="page" id="page-lessons">
+      <div class="page-title">🎥 Darslar</div>
+      <div class="page-sub">Kurs darslari boshqaruvi</div>
+      <div class="section-card">
+        <div class="sc-head">
+          <h3>Darslar</h3>
+          <button class="btn-add" onclick="openModal('addLesson')">+ Yangi Dars</button>
+        </div>
+        <table>
+          <thead><tr><th>Dars nomi</th><th>Kurs</th><th>Davomiyligi</th><th>Ko'rishlar</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="lessonsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== TESTS PAGE ===== -->
+    <div class="page" id="page-tests">
+      <div class="page-title">🧪 Testlar</div>
+      <div class="page-sub">Testlar va savollar boshqaruvi</div>
+      <div class="section-card">
+        <div class="sc-head">
+          <h3>Testlar ro'yxati</h3>
+          <button class="btn-add" onclick="openModal('addTest')">+ Yangi Test</button>
+        </div>
+        <table>
+          <thead><tr><th>Test nomi</th><th>Kurs</th><th>Savollar</th><th>O'rtacha ball</th><th>Holat</th><th>Amal</th></tr></thead>
+          <tbody id="testsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ANALYTICS PAGE ===== -->
+    <div class="page" id="page-analytics">
+      <div class="page-title">📈 Analitika va Hisobotlar</div>
+      <div class="page-sub">Platform faoliyati ko'rsatkichlari</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+        <div class="stat-card sc-blue"><div class="sc-icon">⏱</div><div class="sc-val" style="color:var(--blue)">4.2h</div><div class="sc-lbl">O'rtacha o'rganish vaqti</div></div>
+        <div class="stat-card sc-green"><div class="sc-icon">✅</div><div class="sc-val" style="color:var(--green)">76%</div><div class="sc-lbl">Test muvaffaqiyati</div></div>
+        <div class="stat-card sc-purple"><div class="sc-icon">🔥</div><div class="sc-val" style="color:var(--purple)">8.3</div><div class="sc-lbl">O'rtacha streak (kun)</div></div>
+      </div>
+      <div style="padding:30px;text-align:center;color:#475569;font-size:14px">
+        <div style="font-size:40px;margin-bottom:10px">📊</div>
+        <div>Kengaytirilgan analitika tez orada qo'shiladi</div>
+      </div>
+    </div>
+
+    <!-- ===== PAYMENTS PAGE ===== -->
+    <div class="page" id="page-payments">
+      <div class="page-title">💳 To'lovlar</div>
+      <div class="page-sub">Barcha to'lov tranzaksiyalari</div>
+      <div class="section-card">
+        <div class="sc-head"><h3>So'nggi to'lovlar</h3></div>
+        <table>
+          <thead><tr><th>Foydalanuvchi</th><th>Kurs</th><th>Summa</th><th>Sana</th><th>Holat</th></tr></thead>
+          <tbody id="paymentsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="page" id="page-settings">
+      <div class="page-title">⚙️ Sozlamalar</div>
+      <div class="page-sub">Platforma sozlamalari</div>
+      <div class="settings-grid">
+        <div class="setting-card">
+          <div class="setting-title">🔔 Bildirishnomalar</div>
+          <div class="setting-row">
+            <div class="sr-left"><h4>Email xabarnomalar</h4><p>Yangi foydalanuvchilarga xush kelibsiz email yuborish</p></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left"><h4>SMS xabarnomalar</h4><p>Muhim yangiliklar uchun SMS</p></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left"><h4>Telegram bot</h4><p>Telegram orqali bildirishnomalar</p></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+        <div class="setting-card">
+          <div class="setting-title">🌐 Platforma</div>
+          <div class="setting-row">
+            <div class="sr-left"><h4>Yangi ro'yxatdan o'tish</h4><p>Yangi foydalanuvchilar qo'shila oladimi</p></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left"><h4>Texnik ishlar rejimi</h4><p>Saytni vaqtincha yoping</p></div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="sr-left"><h4>AI yordamchi</h4><p>AI chat funksiyasini yoqish</p></div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+        <div class="setting-card" style="grid-column:span 2">
+          <div class="setting-title">🔐 Admin ma'lumotlarini yangilash</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div><label style="font-size:13px;color:#94a3b8;margin-bottom:6px;display:block">Admin Email</label>
+              <input class="set-input" value="admin@itcourse.uz"/></div>
+            <div><label style="font-size:13px;color:#94a3b8;margin-bottom:6px;display:block">Yangi Parol</label>
+              <input class="set-input" type="password" placeholder="Yangi parol..."/></div>
+          </div>
+          <button class="set-save" onclick="showToast('✅ Sozlamalar saqlandi!')">Saqlash</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+
+<!-- MODALS -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal" id="modalBox">
+    <div class="modal-head">
+      <h3 id="modalTitle">Modal</h3>
+      <button class="modal-cls" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="closeModal()">Bekor qilish</button>
+      <button class="btn-save" onclick="saveModal()">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-ct" id="toastCt"></div>
+
+<script>
+// ─── AUTH ──────────────────────────────────────────────────────────
+const user=JSON.parse(localStorage.getItem('itcUser')||'{}');
+if(!user.email||!user.isAdmin)window.location.href='login.html';
+function logout(){localStorage.removeItem('itcUser');window.location.href='login.html'}
+
+// ─── DATA ──────────────────────────────────────────────────────────
+const usersData=[
+  {id:1,name:'Akbar Karimov',email:'akbar@gmail.com',course:'Python',status:'active',score:92,date:'2026-01-15',av:'AK',color:'linear-gradient(135deg,#3b82f6,#06b6d4)'},
+  {id:2,name:'Zulfiya Azimova',email:'zulfiya@mail.ru',course:'JavaScript',status:'trial',score:85,date:'2026-02-03',av:'ZA',color:'linear-gradient(135deg,#8b5cf6,#f472b6)'},
+  {id:3,name:'Jahongir Yusupov',email:'jahon@gmail.com',course:'Web Dev',status:'active',score:78,date:'2026-02-10',av:'JY',color:'linear-gradient(135deg,#10b981,#3b82f6)'},
+  {id:4,name:'Malika Saidova',email:'malika@example.com',course:'AI & ML',status:'active',score:96,date:'2026-02-18',av:'MS',color:'linear-gradient(135deg,#f59e0b,#ef4444)'},
+  {id:5,name:'Bobur Mirzayev',email:'bobur@gmail.com',course:'Python',status:'free',score:45,date:'2026-03-01',av:'BM',color:'linear-gradient(135deg,#06b6d4,#8b5cf6)'},
+  {id:6,name:'Nilufar Karimova',email:'nilufar@mail.uz',course:'DevOps',status:'active',score:88,date:'2026-03-12',av:'NK',color:'linear-gradient(135deg,#34d399,#3b82f6)'},
+  {id:7,name:'Shaxlo Hamidova',email:'shaxlo@gmail.com',course:'Python',status:'trial',score:71,date:'2026-04-05',av:'SH',color:'linear-gradient(135deg,#f472b6,#f59e0b)'},
+  {id:8,name:'Jasur Toshmatov',email:'jasur@example.com',course:'JavaScript',status:'active',score:83,date:'2026-04-20',av:'JT',color:'linear-gradient(135deg,#6366f1,#06b6d4)'},
+];
+
+const coursesAdminData=[
+  {emoji:'🐍',bg:'linear-gradient(135deg,#1a1000,#2d1f00)',title:'Python',students:4200,lessons:48,rating:4.9,status:'active',revenue:'8.4M'},
+  {emoji:'⚡',bg:'linear-gradient(135deg,#000d1a,#001a33)',title:'JavaScript + React',students:3800,lessons:42,rating:4.8,status:'active',revenue:'7.1M'},
+  {emoji:'🌐',bg:'linear-gradient(135deg,#000d1a,#00200d)',title:'Web Dev Bootcamp',students:5100,lessons:65,rating:4.9,status:'active',revenue:'12.3M'},
+  {emoji:'🤖',bg:'linear-gradient(135deg,#0d001a,#1a0033)',title:'Machine Learning',students:2900,lessons:55,rating:4.9,status:'active',revenue:'9.8M'},
+  {emoji:'☁️',bg:'linear-gradient(135deg,#001a1a,#002020)',title:'Docker & AWS',students:1800,lessons:36,rating:4.7,status:'active',revenue:'5.2M'},
+  {emoji:'📱',bg:'linear-gradient(135deg,#1a0000,#1a0020)',title:'Flutter Mobile',students:2200,lessons:40,rating:4.8,status:'draft',revenue:'4.1M'},
+];
+
+const lessonsData=[
+  {name:'Python ga kirish',course:'Python',dur:'8:20',views:4234,status:'published'},
+  {name:'O\'zgaruvchilar',course:'Python',dur:'12:34',views:3891,status:'published'},
+  {name:'Shartlar va tsikllar',course:'Python',dur:'18:45',views:3102,status:'published'},
+  {name:'JavaScript asoslari',course:'JavaScript',dur:'14:20',views:2876,status:'published'},
+  {name:'React Hooks',course:'JavaScript',dur:'22:10',views:2341,status:'published'},
+  {name:'Docker o\'rnatish',course:'DevOps',dur:'16:30',views:1893,status:'draft'},
+];
+
+const testsData=[
+  {name:'Python Asoslari Testi',course:'Python',questions:5,avgScore:82,status:'active'},
+  {name:'O\'zgaruvchilar Testi',course:'Python',questions:8,avgScore:76,status:'active'},
+  {name:'JavaScript Test 1',course:'JavaScript',questions:10,avgScore:71,status:'active'},
+  {name:'React Final Test',course:'JavaScript',questions:15,avgScore:68,status:'draft'},
+];
+
+const paymentsData=[
+  {user:'Akbar Karimov',course:'Python',amount:'299,000 so\'m',date:'2026-05-20',status:'paid'},
+  {user:'Zulfiya Azimova',course:'JavaScript',amount:'299,000 so\'m',date:'2026-05-19',status:'paid'},
+  {user:'Malika Saidova',course:'AI & ML',amount:'499,000 so\'m',date:'2026-05-18',status:'paid'},
+  {user:'Jasur Toshmatov',course:'Web Dev',amount:'199,000 so\'m',date:'2026-05-17',status:'pending'},
+  {user:'Nilufar Karimova',course:'DevOps',amount:'399,000 so\'m',date:'2026-05-16',status:'paid'},
+];
+
+// ─── RENDER ────────────────────────────────────────────────────────
+function renderAll(){
+  renderUsers(usersData);
+  renderRecentUsers();
+  renderCourses();
+  renderLessons();
+  renderTests();
+  renderPayments();
+  document.getElementById('userCount').textContent=usersData.length;
+}
+
+function renderUsers(data){
+  const tb=document.getElementById('usersTable');
+  tb.innerHTML=data.map(u=>`
+    <tr>
+      <td><div class="td-user">
+        <div class="user-av" style="background:${u.color}">${u.av}</div>
+        <div><div class="user-name">${u.name}</div><div class="user-email">${u.email}</div></div>
+      </div></td>
+      <td><span style="font-size:13px">${u.course}</span></td>
+      <td><span class="status-badge ${u.status==='active'?'sb-active':u.status==='trial'?'sb-trial':'sb-free'}">${u.status==='active'?'✅ Faol':u.status==='trial'?'🔶 Trial':'🆓 Bepul'}</span></td>
+      <td><span style="font-family:'Outfit',sans-serif;font-weight:700;color:${u.score>=80?'#10b981':u.score>=60?'#f59e0b':'#ef4444'}">${u.score}%</span></td>
+      <td style="color:#475569;font-size:12px">${u.date}</td>
+      <td><div class="td-actions">
+        <button class="act-btn ab-edit" onclick="editUser(${u.id})">✏️ Tahrir</button>
+        <button class="act-btn ab-del" onclick="deleteUser(${u.id})">🗑 O'chirish</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderRecentUsers(){
+  const tb=document.getElementById('recentUsersTable');
+  tb.innerHTML=usersData.slice(0,5).map(u=>`
+    <tr>
+      <td><div class="td-user">
+        <div class="user-av" style="background:${u.color};width:30px;height:30px;font-size:11px">${u.av}</div>
+        <div><div class="user-name" style="font-size:13px">${u.name}</div><div class="user-email">${u.email}</div></div>
+      </div></td>
+      <td>${u.course}</td>
+      <td><span class="status-badge ${u.status==='active'?'sb-active':u.status==='trial'?'sb-trial':'sb-free'}">${u.status==='active'?'Faol':u.status==='trial'?'Trial':'Bepul'}</span></td>
+      <td style="color:#475569;font-size:12px">${u.date}</td>
+    </tr>`).join('');
+}
+
+function renderCourses(){
+  document.getElementById('coursesAdmin').innerHTML=coursesAdminData.map(c=>`
+    <div class="cag-card">
+      <div class="cag-thumb" style="background:${c.bg}">${c.emoji}</div>
+      <div class="cag-body">
+        <div class="cag-title">${c.title}</div>
+        <div class="cag-meta">
+          <span>⭐ ${c.rating}</span>
+          <span>·</span>
+          <span>${c.lessons} dars</span>
+          <span>·</span>
+          <span style="color:${c.status==='active'?'#10b981':'#f59e0b'}">${c.status==='active'?'✅ Faol':'📝 Qoralama'}</span>
+        </div>
+        <div class="cag-stats">
+          <div class="cag-s"><div class="cag-sv" style="color:#3b82f6">${c.students.toLocaleString()}</div><div class="cag-sl">Talaba</div></div>
+          <div class="cag-s"><div class="cag-sv" style="color:#10b981">${c.revenue}</div><div class="cag-sl">Daromad</div></div>
+        </div>
+        <div class="cag-actions">
+          <button class="act-btn ab-edit" style="flex:1;justify-content:center" onclick="openModal('editCourse')">✏️ Tahrir</button>
+          <button class="act-btn ab-view" style="flex:1;justify-content:center">👁 Ko'rish</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderLessons(){
+  document.getElementById('lessonsTable').innerHTML=lessonsData.map(l=>`
+    <tr>
+      <td style="font-weight:600">${l.name}</td>
+      <td>${l.course}</td>
+      <td>${l.dur}</td>
+      <td>${l.views.toLocaleString()}</td>
+      <td><span class="status-badge ${l.status==='published'?'sb-active':'sb-trial'}">${l.status==='published'?'✅ Nashr':' Qoralama'}</span></td>
+      <td><div class="td-actions">
+        <button class="act-btn ab-edit">✏️</button>
+        <button class="act-btn ab-del">🗑</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderTests(){
+  document.getElementById('testsTable').innerHTML=testsData.map(t=>`
+    <tr>
+      <td style="font-weight:600">${t.name}</td>
+      <td>${t.course}</td>
+      <td>${t.questions} ta savol</td>
+      <td><span style="color:${t.avgScore>=80?'#10b981':t.avgScore>=60?'#f59e0b':'#ef4444'};font-weight:700">${t.avgScore}%</span></td>
+      <td><span class="status-badge ${t.status==='active'?'sb-active':'sb-trial'}">${t.status==='active'?'✅ Faol':'📝 Qoralama'}</span></td>
+      <td><div class="td-actions">
+        <button class="act-btn ab-edit" onclick="openModal('editTest')">✏️ Tahrir</button>
+        <button class="act-btn ab-del">🗑</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderPayments(){
+  document.getElementById('paymentsTable').innerHTML=paymentsData.map(p=>`
+    <tr>
+      <td style="font-weight:600">${p.user}</td>
+      <td>${p.course}</td>
+      <td style="font-weight:700;color:#10b981">${p.amount}</td>
+      <td style="color:#475569;font-size:12px">${p.date}</td>
+      <td><span class="status-badge ${p.status==='paid'?'sb-active':'sb-trial'}">${p.status==='paid'?'✅ To\'langan':'⏳ Kutilmoqda'}</span></td>
+    </tr>`).join('');
+}
+
+// ─── PAGE SWITCH ────────────────────────────────────────────────────
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('on'));
+  document.getElementById('page-'+name).classList.add('on');
+  const map={dashboard:0,users:1,courses:2,lessons:3,tests:4,analytics:5,payments:6,settings:7};
+  const items=document.querySelectorAll('.sb-item');
+  if(items[map[name]])items[map[name]].classList.add('on');
+}
+
+// ─── FILTER ─────────────────────────────────────────────────────────
+function filterTable(q){
+  const qL=q.toLowerCase();
+  const filtered=usersData.filter(u=>u.name.toLowerCase().includes(qL)||u.email.toLowerCase().includes(qL)||u.course.toLowerCase().includes(qL));
+  renderUsers(filtered);
+  document.getElementById('userCount').textContent=filtered.length;
+}
+
+// ─── USER ACTIONS ───────────────────────────────────────────────────
+function editUser(id){
+  const u=usersData.find(x=>x.id===id);
+  openModal('editUser',u);
+}
+
+function deleteUser(id){
+  if(!confirm('Haqiqatan ham o\'chirmoqchimisiz?'))return;
+  const i=usersData.findIndex(x=>x.id===id);
+  if(i>-1){usersData.splice(i,1);renderUsers(usersData);renderRecentUsers();showToast('🗑 Foydalanuvchi o\'chirildi','warn')}
+}
+
+// ─── MODALS ─────────────────────────────────────────────────────────
+const modalForms={
+  addUser:{title:'➕ Yangi Foydalanuvchi',body:`
+    <div class="mf-group"><label>To'liq ism</label><input class="mf-input" placeholder="Ism Familiya"/></div>
+    <div class="mf-group"><label>Email</label><input class="mf-input" type="email" placeholder="email@example.com"/></div>
+    <div class="mf-group"><label>Kurs</label><select class="mf-select"><option>Python</option><option>JavaScript</option><option>Web Dev</option><option>AI & ML</option></select></div>
+    <div class="mf-group"><label>Holat</label><select class="mf-select"><option value="active">Faol</option><option value="trial">Trial</option><option value="free">Bepul</option></select></div>`},
+  addCourse:{title:'📚 Yangi Kurs',body:`
+    <div class="mf-group"><label>Kurs nomi</label><input class="mf-input" placeholder="Python asoslari..."/></div>
+    <div class="mf-group"><label>Kategoriya</label><select class="mf-select"><option>Backend</option><option>Frontend</option><option>AI & ML</option><option>DevOps</option><option>Mobile</option></select></div>
+    <div class="mf-group"><label>O'qituvchi</label><input class="mf-input" placeholder="Ism Familiya"/></div>
+    <div class="mf-group"><label>Tavsif</label><textarea class="mf-textarea" placeholder="Kurs haqida..."></textarea></div>
+    <div class="mf-group"><label>Narx (so'm)</label><input class="mf-input" type="number" placeholder="299000"/></div>`},
+  addLesson:{title:'🎥 Yangi Dars',body:`
+    <div class="mf-group"><label>Dars nomi</label><input class="mf-input" placeholder="Dars nomi..."/></div>
+    <div class="mf-group"><label>Kurs</label><select class="mf-select"><option>Python</option><option>JavaScript</option><option>Web Dev</option></select></div>
+    <div class="mf-group"><label>YouTube Video ID</label><input class="mf-input" placeholder="rfscVS0vtbw"/></div>
+    <div class="mf-group"><label>Davomiyligi (min)</label><input class="mf-input" type="number" placeholder="15"/></div>
+    <div class="mf-group"><label>Tavsif</label><textarea class="mf-textarea" placeholder="Dars haqida..."></textarea></div>`},
+  addTest:{title:'🧪 Yangi Test',body:`
+    <div class="mf-group"><label>Test nomi</label><input class="mf-input" placeholder="Python testi..."/></div>
+    <div class="mf-group"><label>Kurs</label><select class="mf-select"><option>Python</option><option>JavaScript</option><option>Web Dev</option></select></div>
+    <div class="mf-group"><label>O'tish bali (%)</label><input class="mf-input" type="number" placeholder="60" min="0" max="100"/></div>
+    <div class="mf-group"><label>Vaqt (daqiqa)</label><input class="mf-input" type="number" placeholder="10"/></div>`},
+  editUser:{title:'✏️ Tahrirlash',body:`
+    <div class="mf-group"><label>To'liq ism</label><input class="mf-input" id="editName"/></div>
+    <div class="mf-group"><label>Email</label><input class="mf-input" type="email" id="editEmail"/></div>
+    <div class="mf-group"><label>Holat</label><select class="mf-select" id="editStatus"><option value="active">Faol</option><option value="trial">Trial</option><option value="free">Bepul</option></select></div>`},
+  editCourse:{title:'✏️ Kursni Tahrirlash',body:`
+    <div class="mf-group"><label>Kurs nomi</label><input class="mf-input"/></div>
+    <div class="mf-group"><label>Holat</label><select class="mf-select"><option>Faol</option><option>Qoralama</option></select></div>`},
+  editTest:{title:'✏️ Testni Tahrirlash',body:`
+    <div class="mf-group"><label>Test nomi</label><input class="mf-input"/></div>
+    <div class="mf-group"><label>Holat</label><select class="mf-select"><option value="active">Faol</option><option value="draft">Qoralama</option></select></div>`},
+};
+
+let currentModal='';
+function openModal(type,data){
+  currentModal=type;
+  const m=modalForms[type]||{title:'Modal',body:''};
+  document.getElementById('modalTitle').textContent=m.title;
+  document.getElementById('modalBody').innerHTML=m.body;
+  if(data&&type==='editUser'){
+    const nm=document.getElementById('editName');
+    const em=document.getElementById('editEmail');
+    const st=document.getElementById('editStatus');
+    if(nm)nm.value=data.name;
+    if(em)em.value=data.email;
+    if(st)st.value=data.status;
+  }
+  document.getElementById('modalOv').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modalOv').classList.remove('on');
+  document.body.style.overflow='';
+}
+function saveModal(){
+  closeModal();
+  const msgs={addUser:'✅ Yangi foydalanuvchi qo\'shildi!',addCourse:'✅ Yangi kurs qo\'shildi!',addLesson:'✅ Yangi dars qo\'shildi!',addTest:'✅ Yangi test qo\'shildi!',editUser:'✅ Foydalanuvchi yangilandi!',editCourse:'✅ Kurs yangilandi!',editTest:'✅ Test yangilandi!'};
+  showToast(msgs[currentModal]||'✅ Saqlandi!');
+}
+document.getElementById('modalOv').addEventListener('click',e=>{if(e.target===document.getElementById('modalOv'))closeModal()});
+
+// ─── TOAST ──────────────────────────────────────────────────────────
+function showToast(msg,type='ok'){
+  const ct=document.getElementById('toastCt');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.textContent=msg;
+  if(type==='warn')t.style.borderColor='rgba(245,158,11,.3)';
+  ct.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300)},3000);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────
+renderAll();
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+</script>
+</body>
+</html>
